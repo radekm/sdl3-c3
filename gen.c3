@@ -306,6 +306,10 @@ fn String translate_type_ident(String ident)
         case "bool":
             // Or should we return `CBool`?
             result = "bool";
+        case "Uint8":
+            result = "char";
+        case "Sint32":
+            result = "int";
         case "Uint32":
             result = "uint";
         case "Uint64":
@@ -354,6 +358,21 @@ fn usz? parse_and_translate_type(String line, usz pos, String* translated)
             String translated_ident = translate_type_ident(ident);
             if (translated_ident == "") return TYPE_TRANSLATION_FAILED?;
             *translated = string::tformat("%s*", translated_ident);
+            return p.pos;
+        }
+    }
+
+    // Pointer to constant pointer to type.
+    // For example `SDL_GPUBuffer *const *storage_buffers`.
+    {
+        Parsing p = orig;
+        String ident;
+        String space;
+        if (try p.ident(&ident) && try p.space1(&space) && try p.str("*const") && try p.space1(&space) && try p.str("*") && try p.space(&space))
+        {
+            String translated_ident = translate_type_ident(ident);
+            if (translated_ident == "") return TYPE_TRANSLATION_FAILED?;
+            *translated = string::tformat("%s**", translated_ident);
             return p.pos;
         }
     }
@@ -412,6 +431,19 @@ fn void? parse_and_translate_typedef(String line, String* translated_type, Strin
     String rest;
     p.rest(&rest);
     if (rest != ";") return PARSING_FAILED?;
+}
+
+// For example `typedef struct SDL_GPUDevice SDL_GPUDevice;`.
+fn bool is_useless_typedef(String line)
+{
+    Parsing p = { .line = line };
+    String ident;
+    String ident2;
+    if (try p.str("typedef struct ") && try p.ident(&ident) && try p.str(" ") && try p.ident(&ident2) && try p.str(";"))
+    {
+        return ident == ident2;
+    }
+    return false;
 }
 
 fn void? generate(String input_file)
@@ -487,6 +519,11 @@ fn void? generate(String input_file)
             io::printfn("typedef %s = %s;", typedef_name, typedef_translated_type);
             i++;
         }
+        else if (is_useless_typedef(line))
+        {
+            // Skip typedefs which are not necessary in C3.
+            i++;
+        }
         else if (line.starts_with("typedef enum ") && !line.ends_with(";"))
         {
             String enum_name = line[13 ..];
@@ -497,12 +534,36 @@ fn void? generate(String input_file)
 
             // Read enum items.
             line = lines[++i];
+            List{String[]} lines_above_items;  // Lines above items usually with comments or empty.
+            lines_above_items.tinit(128);
             List{String} names;
             names.tinit(128);
             List{String} rests;
             rests.tinit(128);
             while (!line.starts_with("}"))
             {
+                // Skip lines with comments or empty lines.
+                usz first_line = i;
+                while (true)
+                {
+                    // Empty line.
+                    if (lines[i] == "")
+                    {
+                        i++;
+                    }
+                    // Single-line comment.
+                    else if (lines[i].starts_with("    /*") && lines[i].ends_with("*/"))
+                    {
+                        i++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                lines_above_items.push(lines[first_line:i-first_line]);
+                line = lines[i];
+
                 if (!line.starts_with("    ")) abort("Expected four spaces before each enum item, got: '%s'", line);
                 // We assume that that are exactly four spaces at the beginning (not more).
                 usz name_start = 4;
@@ -518,7 +579,12 @@ fn void? generate(String input_file)
             usz common_prefix = longest_prefix_of_enum_items(names.array_view());
             foreach (j, name : names)
             {
+                String[] lines_above_item = lines_above_items[j];
                 String rest = rests[j];
+                foreach (l : lines_above_item)
+                {
+                    io::printfn("%s", l);
+                }
                 io::printfn("    %s%s", name[common_prefix..], rest);
             }
 
@@ -635,8 +701,24 @@ fn void? generate(String input_file)
             {
                 // Translate params.
                 // They may be on multiple lines.
-                // Each line may contain one or more params.
+                // Each line except the first line may contain one or more params.
+                usz params_indent = before_params.len;
                 Parsing p = { .line = params };
+
+                // No params on the first line.
+                if (params == "")
+                {
+                    params_indent = 4;
+                    // Go to the next line.
+                    io::printfn("");
+                    p.line = lines[++i];
+                    p.pos = 0;
+                    String space;
+                    p.space(&space);  // Skip spaces at the beginning.
+                    // Insert correct indentation.
+                    io::printf("    ");
+                }
+
                 while PARAM: (true)
                 {
                     String translated_param_type;
@@ -658,7 +740,7 @@ fn void? generate(String input_file)
                             String space;
                             p.space(&space);  // Skip spaces at the beginning.
                             // Insert correct indentation.
-                            usz spaces_to_add = before_params.len;
+                            usz spaces_to_add = params_indent;
                             while (spaces_to_add--)
                             {
                                 io::printf(" ");

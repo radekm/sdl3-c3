@@ -25,7 +25,6 @@ enum SDL_SystemTheme : const CInt
     DARK       /**< Dark colored system theme */
 }
 
-::LINE:: typedef struct SDL_DisplayModeData SDL_DisplayModeData;
 
 struct SDL_DisplayMode
 {
@@ -49,7 +48,6 @@ enum SDL_DisplayOrientation : const CInt
     PORTRAIT_FLIPPED    /**< The display is in portrait mode, upside down */
 }
 
-::LINE:: typedef struct SDL_Window SDL_Window;
 
 enum SDL_WindowFlags : const ulong
 {
