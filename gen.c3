@@ -356,6 +356,10 @@ fn String translate_type_ident(String ident)
             result = "bool";
         case "Uint8":
             result = "char";
+        case "Sint16":
+            result = "short";
+        case "Uint16":
+            result = "ushort";
         case "Sint32":
             result = "int";
         case "Uint32":
@@ -389,9 +393,41 @@ fn usz? parse_and_translate_type(String line, usz pos, String* translated)
     {
         Parsing p = orig;
         String space;
+        if (try p.str("const char * const *") && try p.space(&space))
+        {
+            *translated = "ZString*";
+            return p.pos;
+        }
+    }
+
+    {
+        Parsing p = orig;
+        String space;
+        if (try p.str("const char **") && try p.space(&space))
+        {
+            *translated = "ZString*";
+            return p.pos;
+        }
+    }
+
+    {
+        Parsing p = orig;
+        String space;
         if (try p.str("const char *") && try p.space(&space))
         {
             *translated = "ZString";
+            return p.pos;
+        }
+    }
+
+    // Pointer to char.
+    {
+        Parsing p = orig;
+        String ident;
+        String space;
+        if (try p.str("char *") && try p.space(&space))
+        {
+            *translated = "char*";
             return p.pos;
         }
     }
@@ -592,9 +628,11 @@ fn void? generate(String input_file)
             names.tinit(128);
             List{String} rests;
             rests.tinit(128);
+            List{String[]} lines_below_items;  // Lines below items where comments from `rests` continue.
+            lines_below_items.tinit(128);
             while (!line.starts_with("}"))
             {
-                // Skip lines with comments or empty lines.
+                // Save lines with comments or empty lines.
                 usz first_line = i;
                 while (true)
                 {
@@ -624,7 +662,19 @@ fn void? generate(String input_file)
                 String rest = line[name_start+name_len..];
                 names.push(name);
                 rests.push(rest);
-                line = lines[++i];
+                // Comment starts in `rest` but doesn't end on current line.
+                // We have to read lines below.
+                first_line = i + 1;
+                String[] lines_below_item;
+                if (rest.contains("/*") && !rest.ends_with("*/"))
+                {
+                    while (!lines[++i].ends_with("*/")) {}
+                }
+                // Save empty lines after the item.
+                while (lines[++i] == "") {}
+                lines_below_item = lines[first_line:i-first_line];
+                lines_below_items.push(lines_below_item);
+                line = lines[i];
             }
 
             // Drop the longest common prefix of item names.
@@ -632,12 +682,20 @@ fn void? generate(String input_file)
             foreach (j, name : names)
             {
                 String[] lines_above_item = lines_above_items[j];
+                String[] lines_below_item = lines_below_items[j];
                 String rest = rests[j];
                 foreach (l : lines_above_item)
                 {
                     io::printfn("%s", l);
                 }
                 io::printfn("    %s%s", name[common_prefix..], rest);
+                foreach (l : lines_below_item)
+                {
+                    // We drop `common_prefix` chars from non-empty lines hoping that these are spaces.
+                    // We're doing this to preserve indent.
+                    if (l != "") l = l[common_prefix..];
+                    io::printfn("%s", l);
+                }
             }
 
             io::printfn("}");
@@ -655,13 +713,16 @@ fn void? generate(String input_file)
             line = lines[++i];
             List{String} translated_types;
             translated_types.tinit(128);
-            List{isz} type_len_differences;  // `c_type_len` - `c3_type_len`.
+            // How much has type length increased. If negative then new type length is shorter.
+            List{isz} type_len_differences;  // `c3_type_len` - `c_type_len`.
             type_len_differences.tinit(128);
             List{String} names;
             names.tinit(128);
             List{String} rests;
             rests.tinit(128);
-            isz min_len_difference;  // If negative we have to add `-min_len_difference` spaces to every line.
+            List{String[]} lines_below_fields;  // Lines below fields where comments from `rests` continue.
+            lines_below_fields.tinit(128);
+            isz max_len_difference;
             while (!line.starts_with("}"))
             {
                 // We assume that that are exactly four spaces at the beginning (not more).
@@ -673,9 +734,20 @@ fn void? generate(String input_file)
                 usz pos = parse_and_translate_type(line, 4, &translated_type)!;
                 isz c_type_len = pos - 4;  // Including the space after it (if there was any).
                 isz c3_type_len = translated_type.len + 1;  // `+ 1` is for the space after it.
-                isz type_len_difference = c_type_len - c3_type_len;
+                isz type_len_difference = c3_type_len - c_type_len;
                 Parsing p = { .line = line, .pos = pos };
                 p.ident(&name)!;
+
+                // Struct field is array.
+                // Read array size and add it into `name`.
+                if (try p.str("["))
+                {
+                    String array_size;
+                    p.rest_until(']', &array_size)!;
+                    p.str("]")!;
+                    name = line[pos:p.pos-pos];
+                }
+
                 p.str(";")!;
                 p.rest(&rest);
 
@@ -683,10 +755,20 @@ fn void? generate(String input_file)
                 type_len_differences.push(type_len_difference);
                 names.push(name);
                 rests.push(rest);
-                if (rest.len > 0) min_len_difference = min(min_len_difference, type_len_difference);
+                max_len_difference = max(max_len_difference, type_len_difference);
 
-                // CONSIDER: Preserve empty lines inside structs?
-                i = skip_comments_and_empty_lines(lines, i + 1);
+                usz first_line = i + 1;
+                String[] lines_below_field;
+                // Comment starts in `rest` but doesn't end on current line.
+                // We have to read lines below.
+                if (rest.contains("/*") && !rest.ends_with("*/"))
+                {
+                    while (!lines[++i].ends_with("*/")) {}
+                }
+                // Save empty lines after the field.
+                while (lines[++i] == "") {}
+                lines_below_field = lines[first_line:i-first_line];
+                lines_below_fields.push(lines_below_field);
                 line = lines[i];
             }
 
@@ -695,19 +777,29 @@ fn void? generate(String input_file)
                 isz type_len_difference = type_len_differences[j];
                 String name = names[j];
                 String rest = rests[j];
+                String[] lines_below_field = lines_below_fields[j];
                 io::printf("    %s %s;", translated_type, name);
                 // Ensure that rest has same alignment even if translated types have different lengths.
                 if (rest.len > 0)
                 {
-                    // Type len difference is negative if C3 type is longer than C type.
-                    // For example `CInt` is longer than `int`.
-                    isz spaces_to_add = -min_len_difference + type_len_difference;
+                    isz spaces_to_add = max_len_difference - type_len_difference;
                     while (spaces_to_add-- > 0)
                     {
                         io::printf(" ");
                     }
                 }
                 io::printfn("%s", rest);
+                foreach (l : lines_below_field)
+                {
+                    // Add spaces to preserve alignment.
+                    isz spaces_to_add = max_len_difference;
+                    while (spaces_to_add-- > 0)
+                    {
+                        io::printf(" ");
+                    }
+
+                    io::printfn("%s", l);
+                }
             }
 
             io::printfn("}");

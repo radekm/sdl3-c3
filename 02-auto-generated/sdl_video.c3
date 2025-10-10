@@ -36,7 +36,9 @@ struct SDL_DisplayMode
     float refresh_rate;              /**< refresh rate (or 0.0f for unspecified) */
     CInt refresh_rate_numerator;     /**< precise refresh rate numerator (or 0 for unspecified) */
     CInt refresh_rate_denominator;   /**< precise refresh rate denominator */
+ 
     SDL_DisplayModeData* internal;   /**< Private */
+ 
 }
 
 enum SDL_DisplayOrientation : const CInt

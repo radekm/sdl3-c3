@@ -549,6 +549,7 @@ struct SDL_GPUSamplerCreateInfo
     bool enable_compare;                       /**< true to enable comparison against a reference value during lookups. */
     char padding1;
     char padding2;
+
     SDL_PropertiesID props;                    /**< A properties ID for extensions. Should be 0 if no extensions are needed. */
 }
 
@@ -611,6 +612,7 @@ struct SDL_GPUShaderCreateInfo
     uint num_storage_textures;    /**< The number of storage textures defined in the shader. */
     uint num_storage_buffers;     /**< The number of storage buffers defined in the shader. */
     uint num_uniform_buffers;     /**< The number of uniform buffers defined in the shader. */
+
     SDL_PropertiesID props;       /**< A properties ID for extensions. Should be 0 if no extensions are needed. */
 }
 
@@ -624,6 +626,7 @@ struct SDL_GPUTextureCreateInfo
     uint layer_count_or_depth;        /**< The layer count or depth of the texture. This value is treated as a layer count on 2D array textures, and as a depth value on 3D textures. */
     uint num_levels;                  /**< The number of mip levels in the texture. */
     SDL_GPUSampleCount sample_count;  /**< The number of samples per texel. Only applies if the texture is used as a render target. */
+
     SDL_PropertiesID props;           /**< A properties ID for extensions. Should be 0 if no extensions are needed. */
 }
 
@@ -631,6 +634,7 @@ struct SDL_GPUBufferCreateInfo
 {
     SDL_GPUBufferUsageFlags usage;  /**< How the buffer is intended to be used by the client. */
     uint size;                      /**< The size in bytes of the buffer. */
+
     SDL_PropertiesID props;         /**< A properties ID for extensions. Should be 0 if no extensions are needed. */
 }
 
@@ -638,6 +642,7 @@ struct SDL_GPUTransferBufferCreateInfo
 {
     SDL_GPUTransferBufferUsage usage;  /**< How the transfer buffer is intended to be used by the client. */
     uint size;                         /**< The size in bytes of the transfer buffer. */
+
     SDL_PropertiesID props;            /**< A properties ID for extensions. Should be 0 if no extensions are needed. */
 }
 
@@ -709,6 +714,7 @@ struct SDL_GPUGraphicsPipelineCreateInfo
     SDL_GPUMultisampleState multisample_state;      /**< The multisample state of the graphics pipeline. */
     SDL_GPUDepthStencilState depth_stencil_state;   /**< The depth-stencil state of the graphics pipeline. */
     SDL_GPUGraphicsPipelineTargetInfo target_info;  /**< Formats and blend modes for the render targets of the graphics pipeline. */
+
     SDL_PropertiesID props;                         /**< A properties ID for extensions. Should be 0 if no extensions are needed. */
 }
 
@@ -727,6 +733,7 @@ struct SDL_GPUComputePipelineCreateInfo
     uint threadcount_x;                     /**< The number of threads in the X dimension. This should match the value in the shader. */
     uint threadcount_y;                     /**< The number of threads in the Y dimension. This should match the value in the shader. */
     uint threadcount_z;                     /**< The number of threads in the Z dimension. This should match the value in the shader. */
+
     SDL_PropertiesID props;                 /**< A properties ID for extensions. Should be 0 if no extensions are needed. */
 }
 
