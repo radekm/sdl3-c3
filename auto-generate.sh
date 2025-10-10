@@ -11,3 +11,4 @@ c3c compile "$script_dir/gen.c3"
 
 ./generator "$script_dir/01-inputs/SDL_video.h" > "$script_dir/02-auto-generated/sdl_video.c3"
 ./generator "$script_dir/01-inputs/SDL_gpu.h" > "$script_dir/02-auto-generated/sdl_gpu.c3"
+./generator "$script_dir/01-inputs/SDL_keycode.h" > "$script_dir/02-auto-generated/sdl_keycode.c3"

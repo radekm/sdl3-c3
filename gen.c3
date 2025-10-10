@@ -130,6 +130,10 @@ String[*] hidden_enums = {
     "SDL_GPUBufferUsageFlags",
     "SDL_GPUShaderFormat",
     "SDL_GPUColorComponentFlags",
+
+    // `SDL_keycode.h`.
+    "SDL_Keycode",
+    "SDL_Keymod",
 };
 
 String[*] hidden_enums_prefixes = {
@@ -145,6 +149,10 @@ String[*] hidden_enums_prefixes = {
     "SDL_GPU_BUFFERUSAGE_",
     "SDL_GPU_SHADERFORMAT_",
     "SDL_GPU_COLORCOMPONENT_",
+
+    // `SDL_keycode.h`.
+    "SDLK_",
+    "SDL_KMOD_"
 };
 
 fn bool is_hidden_enum_with_defines(String line, String* hidden_enum_name, String* hidden_enum_prefix)
@@ -280,6 +288,12 @@ fn void? Parsing.integer(&self, String* out)
         }
         // No digits read.
         if (pos == start_pos) return PARSING_FAILED?;
+    }
+
+    // Try to read option `u` suffix for unsigned.
+    if (pos < self.line.len && self.line[pos] == 'u')
+    {
+        pos++;
     }
 
     // `self.line[pos]` is not part of number.
@@ -521,6 +535,8 @@ fn void? generate(String input_file)
                     underlying_type = "ulong";
                 case line.starts_with("typedef Uint32"):
                     underlying_type = "uint";
+                case line.starts_with("typedef Uint16"):
+                    underlying_type = "ushort";
                 case line.starts_with("typedef Uint8"):
                     underlying_type = "char";
                 default:
