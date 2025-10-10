@@ -51,31 +51,31 @@ enum SDL_DisplayOrientation : const CInt
 
 enum SDL_WindowFlags : const ulong
 {
-    SDL_WINDOW_FULLSCREEN            = 0x0000000000000001,    /**< window is in fullscreen mode */
-    SDL_WINDOW_OPENGL                = 0x0000000000000002,    /**< window usable with OpenGL context */
-    SDL_WINDOW_OCCLUDED              = 0x0000000000000004,    /**< window is occluded */
-    SDL_WINDOW_HIDDEN                = 0x0000000000000008,    /**< window is neither mapped onto the desktop nor shown in the taskbar/dock/window list; SDL_ShowWindow() is required for it to become visible */
-    SDL_WINDOW_BORDERLESS            = 0x0000000000000010,    /**< no window decoration */
-    SDL_WINDOW_RESIZABLE             = 0x0000000000000020,    /**< window can be resized */
-    SDL_WINDOW_MINIMIZED             = 0x0000000000000040,    /**< window is minimized */
-    SDL_WINDOW_MAXIMIZED             = 0x0000000000000080,    /**< window is maximized */
-    SDL_WINDOW_MOUSE_GRABBED         = 0x0000000000000100,    /**< window has grabbed mouse input */
-    SDL_WINDOW_INPUT_FOCUS           = 0x0000000000000200,    /**< window has input focus */
-    SDL_WINDOW_MOUSE_FOCUS           = 0x0000000000000400,    /**< window has mouse focus */
-    SDL_WINDOW_EXTERNAL              = 0x0000000000000800,    /**< window not created by SDL */
-    SDL_WINDOW_MODAL                 = 0x0000000000001000,    /**< window is modal */
-    SDL_WINDOW_HIGH_PIXEL_DENSITY    = 0x0000000000002000,    /**< window uses high pixel density back buffer if possible */
-    SDL_WINDOW_MOUSE_CAPTURE         = 0x0000000000004000,    /**< window has mouse captured (unrelated to MOUSE_GRABBED) */
-    SDL_WINDOW_MOUSE_RELATIVE_MODE   = 0x0000000000008000,    /**< window has relative mode enabled */
-    SDL_WINDOW_ALWAYS_ON_TOP         = 0x0000000000010000,    /**< window should always be above others */
-    SDL_WINDOW_UTILITY               = 0x0000000000020000,    /**< window should be treated as a utility window, not showing in the task bar and window list */
-    SDL_WINDOW_TOOLTIP               = 0x0000000000040000,    /**< window should be treated as a tooltip and does not get mouse or keyboard focus, requires a parent window */
-    SDL_WINDOW_POPUP_MENU            = 0x0000000000080000,    /**< window should be treated as a popup menu, requires a parent window */
-    SDL_WINDOW_KEYBOARD_GRABBED      = 0x0000000000100000,    /**< window has grabbed keyboard input */
-    SDL_WINDOW_VULKAN                = 0x0000000010000000,    /**< window usable for Vulkan surface */
-    SDL_WINDOW_METAL                 = 0x0000000020000000,    /**< window usable for Metal view */
-    SDL_WINDOW_TRANSPARENT           = 0x0000000040000000,    /**< window with transparent buffer */
-    SDL_WINDOW_NOT_FOCUSABLE         = 0x0000000080000000,    /**< window should not be focusable */
+    FULLSCREEN            = 0x0000000000000001,    /**< window is in fullscreen mode */
+    OPENGL                = 0x0000000000000002,    /**< window usable with OpenGL context */
+    OCCLUDED              = 0x0000000000000004,    /**< window is occluded */
+    HIDDEN                = 0x0000000000000008,    /**< window is neither mapped onto the desktop nor shown in the taskbar/dock/window list; SDL_ShowWindow() is required for it to become visible */
+    BORDERLESS            = 0x0000000000000010,    /**< no window decoration */
+    RESIZABLE             = 0x0000000000000020,    /**< window can be resized */
+    MINIMIZED             = 0x0000000000000040,    /**< window is minimized */
+    MAXIMIZED             = 0x0000000000000080,    /**< window is maximized */
+    MOUSE_GRABBED         = 0x0000000000000100,    /**< window has grabbed mouse input */
+    INPUT_FOCUS           = 0x0000000000000200,    /**< window has input focus */
+    MOUSE_FOCUS           = 0x0000000000000400,    /**< window has mouse focus */
+    EXTERNAL              = 0x0000000000000800,    /**< window not created by SDL */
+    MODAL                 = 0x0000000000001000,    /**< window is modal */
+    HIGH_PIXEL_DENSITY    = 0x0000000000002000,    /**< window uses high pixel density back buffer if possible */
+    MOUSE_CAPTURE         = 0x0000000000004000,    /**< window has mouse captured (unrelated to MOUSE_GRABBED) */
+    MOUSE_RELATIVE_MODE   = 0x0000000000008000,    /**< window has relative mode enabled */
+    ALWAYS_ON_TOP         = 0x0000000000010000,    /**< window should always be above others */
+    UTILITY               = 0x0000000000020000,    /**< window should be treated as a utility window, not showing in the task bar and window list */
+    TOOLTIP               = 0x0000000000040000,    /**< window should be treated as a tooltip and does not get mouse or keyboard focus, requires a parent window */
+    POPUP_MENU            = 0x0000000000080000,    /**< window should be treated as a popup menu, requires a parent window */
+    KEYBOARD_GRABBED      = 0x0000000000100000,    /**< window has grabbed keyboard input */
+    VULKAN                = 0x0000000010000000,    /**< window usable for Vulkan surface */
+    METAL                 = 0x0000000020000000,    /**< window usable for Metal view */
+    TRANSPARENT           = 0x0000000040000000,    /**< window with transparent buffer */
+    NOT_FOCUSABLE         = 0x0000000080000000,    /**< window should not be focusable */
 }
 
 
@@ -164,32 +164,32 @@ enum SDL_GLAttr : const CInt
 
 enum SDL_GLProfile : const uint
 {
-    SDL_GL_CONTEXT_PROFILE_CORE            = 0x0001,  /**< OpenGL Core Profile context */
-    SDL_GL_CONTEXT_PROFILE_COMPATIBILITY   = 0x0002,  /**< OpenGL Compatibility Profile context */
-    SDL_GL_CONTEXT_PROFILE_ES              = 0x0004,  /**< GLX_CONTEXT_ES2_PROFILE_BIT_EXT */
+    CORE            = 0x0001,  /**< OpenGL Core Profile context */
+    COMPATIBILITY   = 0x0002,  /**< OpenGL Compatibility Profile context */
+    ES              = 0x0004,  /**< GLX_CONTEXT_ES2_PROFILE_BIT_EXT */
 }
 
 
 enum SDL_GLContextFlag : const uint
 {
-    SDL_GL_CONTEXT_DEBUG_FLAG               = 0x0001,
-    SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG  = 0x0002,
-    SDL_GL_CONTEXT_ROBUST_ACCESS_FLAG       = 0x0004,
-    SDL_GL_CONTEXT_RESET_ISOLATION_FLAG     = 0x0008,
+    DEBUG_FLAG               = 0x0001,
+    FORWARD_COMPATIBLE_FLAG  = 0x0002,
+    ROBUST_ACCESS_FLAG       = 0x0004,
+    RESET_ISOLATION_FLAG     = 0x0008,
 }
 
 
 enum SDL_GLContextReleaseFlag : const uint
 {
-    SDL_GL_CONTEXT_RELEASE_BEHAVIOR_NONE    = 0x0000,
-    SDL_GL_CONTEXT_RELEASE_BEHAVIOR_FLUSH   = 0x0001,
+    BEHAVIOR_NONE    = 0x0000,
+    BEHAVIOR_FLUSH   = 0x0001,
 }
 
 
 enum SDL_GLContextResetNotification : const uint
 {
-    SDL_GL_CONTEXT_RESET_NO_NOTIFICATION   = 0x0000,
-    SDL_GL_CONTEXT_RESET_LOSE_CONTEXT      = 0x0001,
+    NO_NOTIFICATION   = 0x0000,
+    LOSE_CONTEXT      = 0x0001,
 }
 
 

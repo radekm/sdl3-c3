@@ -118,19 +118,33 @@ fn usz longest_prefix_of_enum_items(String[] names)
 }
 
 String[*] hidden_enums = {
+    // `SDL_video.h`.
     "SDL_WindowFlags",
     "SDL_GLProfile",
     "SDL_GLContextFlag",
     "SDL_GLContextReleaseFlag",
     "SDL_GLContextResetNotification",
+
+    // `SDL_gpu.h`.
+    "SDL_GPUTextureUsageFlags",
+    "SDL_GPUBufferUsageFlags",
+    "SDL_GPUShaderFormat",
+    "SDL_GPUColorComponentFlags",
 };
 
 String[*] hidden_enums_prefixes = {
+    // `SDL_video.h`.
     "SDL_WINDOW_",
     "SDL_GL_CONTEXT_PROFILE_",
     "SDL_GL_CONTEXT_",
     "SDL_GL_CONTEXT_RELEASE_",
-    "SDL_GL_CONTEXT_RESET_"
+    "SDL_GL_CONTEXT_RESET_",
+
+    // `SDL_gpu.h`.
+    "SDL_GPU_TEXTUREUSAGE_",
+    "SDL_GPU_BUFFERUSAGE_",
+    "SDL_GPU_SHADERFORMAT_",
+    "SDL_GPU_COLORCOMPONENT_",
 };
 
 fn bool is_hidden_enum_with_defines(String line, String* hidden_enum_name, String* hidden_enum_prefix)
@@ -279,21 +293,41 @@ fn void Parsing.rest(&self, String* out)
     self.pos = self.line.len;
 }
 
+// Stops when either `delimiter` or end of string is reached.
+fn void? Parsing.rest_until(&self, char delimiter, String* out)
+{
+    usz start_pos = self.pos;
+    usz pos = start_pos;
+    while (pos < self.line.len)
+    {
+        if (self.line[pos] == delimiter) break;
+        pos++;
+    }
+
+    // `self.line[pos]` is not part of `out`.
+    *out = self.line[start_pos:pos-start_pos];
+    self.pos = pos;
+}
+
 fn void? parse_integer_define(String line, String* ident, String* space, String* value, String* rest)
 {
     Parsing p = { .line = line };
     p.str("#define ")!;
     p.ident(ident)!;
     p.space1(space)!;
-    bool value_wrapped;
     if (try p.str("SDL_UINT64_C("))
     {
-        value_wrapped = true;
-    }
-    p.integer(value)!;
-    if (value_wrapped)
-    {
+        p.integer(value)!;
         p.str(")")!;
+    }
+    else if (try p.str("("))
+    {
+        p.rest_until(')', value)!;
+        p.str(")")!;
+    }
+    else
+    {
+        p.integer(value)!;
     }
     p.rest(rest);
 }
@@ -487,6 +521,8 @@ fn void? generate(String input_file)
                     underlying_type = "ulong";
                 case line.starts_with("typedef Uint32"):
                     underlying_type = "uint";
+                case line.starts_with("typedef Uint8"):
+                    underlying_type = "char";
                 default:
                     abort("Unknown underlying type of hidden enum: %s", line);
             }
@@ -504,7 +540,7 @@ fn void? generate(String input_file)
                 String rest;
                 if (catch parse_integer_define(line, &ident, &space, &value, &rest)) break;
                 if (!ident.starts_with(hidden_enum_prefix)) break;
-                io::printfn("    %s%s = %s,%s", ident, space, value, rest);
+                io::printfn("    %s%s = %s,%s", ident[hidden_enum_prefix.len..], space, value, rest);
                 line_before_skip = ++i;
                 i = skip_comments_and_empty_lines(lines, i);
             }

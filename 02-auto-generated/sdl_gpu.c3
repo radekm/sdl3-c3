@@ -181,15 +181,16 @@ enum SDL_GPUTextureFormat : const CInt
     ASTC_12x12_FLOAT
 }
 
-typedef SDL_GPUTextureUsageFlags = uint;
-
-::LINE:: #define SDL_GPU_TEXTUREUSAGE_SAMPLER                                 (1u << 0) /**< Texture supports sampling. */
-::LINE:: #define SDL_GPU_TEXTUREUSAGE_COLOR_TARGET                            (1u << 1) /**< Texture is a color render target. */
-::LINE:: #define SDL_GPU_TEXTUREUSAGE_DEPTH_STENCIL_TARGET                    (1u << 2) /**< Texture is a depth stencil target. */
-::LINE:: #define SDL_GPU_TEXTUREUSAGE_GRAPHICS_STORAGE_READ                   (1u << 3) /**< Texture supports storage reads in graphics stages. */
-::LINE:: #define SDL_GPU_TEXTUREUSAGE_COMPUTE_STORAGE_READ                    (1u << 4) /**< Texture supports storage reads in the compute stage. */
-::LINE:: #define SDL_GPU_TEXTUREUSAGE_COMPUTE_STORAGE_WRITE                   (1u << 5) /**< Texture supports storage writes in the compute stage. */
-::LINE:: #define SDL_GPU_TEXTUREUSAGE_COMPUTE_STORAGE_SIMULTANEOUS_READ_WRITE (1u << 6) /**< Texture supports reads and writes in the same compute shader. This is NOT equivalent to READ | WRITE. */
+enum SDL_GPUTextureUsageFlags : const uint
+{
+    SAMPLER                                  = 1u << 0, /**< Texture supports sampling. */
+    COLOR_TARGET                             = 1u << 1, /**< Texture is a color render target. */
+    DEPTH_STENCIL_TARGET                     = 1u << 2, /**< Texture is a depth stencil target. */
+    GRAPHICS_STORAGE_READ                    = 1u << 3, /**< Texture supports storage reads in graphics stages. */
+    COMPUTE_STORAGE_READ                     = 1u << 4, /**< Texture supports storage reads in the compute stage. */
+    COMPUTE_STORAGE_WRITE                    = 1u << 5, /**< Texture supports storage writes in the compute stage. */
+    COMPUTE_STORAGE_SIMULTANEOUS_READ_WRITE  = 1u << 6, /**< Texture supports reads and writes in the same compute shader. This is NOT equivalent to READ | WRITE. */
+}
 
 enum SDL_GPUTextureType : const CInt
 {
@@ -219,14 +220,15 @@ enum SDL_GPUCubeMapFace : const CInt
     NEGATIVEZ
 }
 
-typedef SDL_GPUBufferUsageFlags = uint;
-
-::LINE:: #define SDL_GPU_BUFFERUSAGE_VERTEX                                  (1u << 0) /**< Buffer is a vertex buffer. */
-::LINE:: #define SDL_GPU_BUFFERUSAGE_INDEX                                   (1u << 1) /**< Buffer is an index buffer. */
-::LINE:: #define SDL_GPU_BUFFERUSAGE_INDIRECT                                (1u << 2) /**< Buffer is an indirect buffer. */
-::LINE:: #define SDL_GPU_BUFFERUSAGE_GRAPHICS_STORAGE_READ                   (1u << 3) /**< Buffer supports storage reads in graphics stages. */
-::LINE:: #define SDL_GPU_BUFFERUSAGE_COMPUTE_STORAGE_READ                    (1u << 4) /**< Buffer supports storage reads in the compute stage. */
-::LINE:: #define SDL_GPU_BUFFERUSAGE_COMPUTE_STORAGE_WRITE                   (1u << 5) /**< Buffer supports storage writes in the compute stage. */
+enum SDL_GPUBufferUsageFlags : const uint
+{
+    VERTEX                                   = 1u << 0, /**< Buffer is a vertex buffer. */
+    INDEX                                    = 1u << 1, /**< Buffer is an index buffer. */
+    INDIRECT                                 = 1u << 2, /**< Buffer is an indirect buffer. */
+    GRAPHICS_STORAGE_READ                    = 1u << 3, /**< Buffer supports storage reads in graphics stages. */
+    COMPUTE_STORAGE_READ                     = 1u << 4, /**< Buffer supports storage reads in the compute stage. */
+    COMPUTE_STORAGE_WRITE                    = 1u << 5, /**< Buffer supports storage writes in the compute stage. */
+}
 
 enum SDL_GPUTransferBufferUsage : const CInt
 {
@@ -240,15 +242,16 @@ enum SDL_GPUShaderStage : const CInt
     FRAGMENT
 }
 
-typedef SDL_GPUShaderFormat = uint;
-
-::LINE:: #define SDL_GPU_SHADERFORMAT_INVALID  0
-::LINE:: #define SDL_GPU_SHADERFORMAT_PRIVATE  (1u << 0) /**< Shaders for NDA'd platforms. */
-::LINE:: #define SDL_GPU_SHADERFORMAT_SPIRV    (1u << 1) /**< SPIR-V shaders for Vulkan. */
-::LINE:: #define SDL_GPU_SHADERFORMAT_DXBC     (1u << 2) /**< DXBC SM5_1 shaders for D3D12. */
-::LINE:: #define SDL_GPU_SHADERFORMAT_DXIL     (1u << 3) /**< DXIL SM6_0 shaders for D3D12. */
-::LINE:: #define SDL_GPU_SHADERFORMAT_MSL      (1u << 4) /**< MSL shaders for Metal. */
-::LINE:: #define SDL_GPU_SHADERFORMAT_METALLIB (1u << 5) /**< Precompiled metallib shaders for Metal. */
+enum SDL_GPUShaderFormat : const uint
+{
+    INVALID   = 0,
+    PRIVATE   = 1u << 0, /**< Shaders for NDA'd platforms. */
+    SPIRV     = 1u << 1, /**< SPIR-V shaders for Vulkan. */
+    DXBC      = 1u << 2, /**< DXBC SM5_1 shaders for D3D12. */
+    DXIL      = 1u << 3, /**< DXIL SM6_0 shaders for D3D12. */
+    MSL       = 1u << 4, /**< MSL shaders for Metal. */
+    METALLIB  = 1u << 5, /**< Precompiled metallib shaders for Metal. */
+}
 
 enum SDL_GPUVertexElementFormat : const CInt
 {
@@ -388,12 +391,13 @@ enum SDL_GPUBlendFactor : const CInt
     SRC_ALPHA_SATURATE         /**< min(source alpha, 1 - destination alpha) */
 }
 
-typedef SDL_GPUColorComponentFlags = char;
-
-::LINE:: #define SDL_GPU_COLORCOMPONENT_R (1u << 0) /**< the red component */
-::LINE:: #define SDL_GPU_COLORCOMPONENT_G (1u << 1) /**< the green component */
-::LINE:: #define SDL_GPU_COLORCOMPONENT_B (1u << 2) /**< the blue component */
-::LINE:: #define SDL_GPU_COLORCOMPONENT_A (1u << 3) /**< the alpha component */
+enum SDL_GPUColorComponentFlags : const char
+{
+    R  = 1u << 0, /**< the red component */
+    G  = 1u << 1, /**< the green component */
+    B  = 1u << 2, /**< the blue component */
+    A  = 1u << 3, /**< the alpha component */
+}
 
 enum SDL_GPUFilter : const CInt
 {
