@@ -323,6 +323,42 @@ fn void? Parsing.rest_until(&self, char delimiter, String* out)
     self.pos = pos;
 }
 
+struct Chooser
+{
+    Parsing* parsing;
+    bool done;
+}
+
+macro void? Parsing.@choose(&self; @body(Chooser* ch))
+{
+    Chooser ch = { .parsing = self };
+    @body(&ch);
+    if (!ch.done) return PARSING_FAILED?;
+}
+
+macro void? Chooser.@variant(&self, #parse, ...)
+{
+    if (!self.done)
+    {
+        Parsing orig = *self.parsing;
+        if (catch excuse = #parse(self.parsing, $vasplat))
+        {
+            if (excuse == PARSING_FAILED)
+            {
+                *self.parsing = orig;
+            }
+            else
+            {
+                return excuse?;
+            }
+        }
+        else
+        {
+            self.done = true;
+        }
+    }
+}
+
 fn void? parse_integer_define(String line, String* ident, String* space, String* value, String* rest)
 {
     Parsing p = { .line = line };
@@ -346,7 +382,7 @@ fn void? parse_integer_define(String line, String* ident, String* space, String*
     p.rest(rest);
 }
 
-fn String translate_type_ident(String ident)
+fn String? translate_type_ident(String ident)
 {
     String result;
     switch (ident)
@@ -383,134 +419,136 @@ fn String translate_type_ident(String ident)
         default:
             if (ident.starts_with("SDL_")) result = ident;
     }
+    if (result == "") return TYPE_TRANSLATION_FAILED?;
     return result;
 }
 
-fn usz? parse_and_translate_type(String line, usz pos, String* translated)
+fn void? Parsing.parse_and_translate_type(&self, String* translated)
 {
-    Parsing orig = { .line = line, .pos = pos };
-
+    self.@choose(; ch)
     {
-        Parsing p = orig;
-        String space;
-        if (try p.str("const char * const *") && try p.space(&space))
+        ch.@variant(fn void?(Parsing* p, String* translated)
         {
+            String space;
+            p.str("const char * const *")!;
+            p.space(&space);
             *translated = "ZString*";
-            return p.pos;
-        }
-    }
-
-    {
-        Parsing p = orig;
-        String space;
-        if (try p.str("const char **") && try p.space(&space))
+        }, translated)!;
+        ch.@variant(fn void?(Parsing* p, String* translated)
         {
+            String space;
+            p.str("const char **")!;
+            p.space(&space);
             *translated = "ZString*";
-            return p.pos;
-        }
-    }
-
-    {
-        Parsing p = orig;
-        String space;
-        if (try p.str("const char *") && try p.space(&space))
+        }, translated)!;
+        ch.@variant(fn void?(Parsing* p, String* translated)
         {
+            String space;
+            p.str("const char *")!;
+            p.space(&space);
             *translated = "ZString";
-            return p.pos;
-        }
-    }
-
-    // Pointer to char.
-    {
-        Parsing p = orig;
-        String ident;
-        String space;
-        if (try p.str("char *") && try p.space(&space))
+        }, translated)!;
+        // Pointer to char.
+        ch.@variant(fn void?(Parsing* p, String* translated)
         {
+            String space;
+            p.str("char *")!;
+            p.space(&space);
             *translated = "char*";
-            return p.pos;
-        }
-    }
 
-    // Const pointer to type.
-    {
-        Parsing p = orig;
-        String ident;
-        String space;
-        if (try p.str("const ") && try p.ident(&ident) && try p.space(&space) && try p.str("*") && try p.space(&space))
+        }, translated)!;
+        // Pointer to constant pointer to constant type.
+        // For example `const void * const *channel_buffers`.
+        ch.@variant(fn void?(Parsing* p, String* translated)
         {
-            String translated_ident = translate_type_ident(ident);
-            if (translated_ident == "") return TYPE_TRANSLATION_FAILED?;
-            *translated = string::tformat("%s*", translated_ident);
-            return p.pos;
-        }
-    }
-
-    // Pointer to constant pointer to type.
-    // For example `SDL_GPUBuffer *const *storage_buffers`.
-    {
-        Parsing p = orig;
-        String ident;
-        String space;
-        if (try p.ident(&ident) && try p.space1(&space) && try p.str("*const") && try p.space1(&space) && try p.str("*") && try p.space(&space))
-        {
-            String translated_ident = translate_type_ident(ident);
-            if (translated_ident == "") return TYPE_TRANSLATION_FAILED?;
+            String ident;
+            String space;
+            p.str("const")!;
+            p.space1(&space)!;
+            p.ident(&ident)!;
+            p.space(&space);
+            p.str("*")!;
+            p.space(&space);
+            p.str("const")!;
+            p.space(&space);
+            p.str("*")!;
+            p.space(&space);
+            String translated_ident = translate_type_ident(ident)!;
             *translated = string::tformat("%s**", translated_ident);
-            return p.pos;
-        }
-    }
-
-    // Pointer to pointer to type.
-    {
-        Parsing p = orig;
-        String ident;
-        String space;
-        if (try p.ident(&ident) && try p.space(&space) && try p.str("**") && try p.space(&space))
+        }, translated)!;
+        // Pointer to constant value.
+        ch.@variant(fn void?(Parsing* p, String* translated)
         {
-            String translated_ident = translate_type_ident(ident);
-            if (translated_ident == "") return TYPE_TRANSLATION_FAILED?;
-            *translated = string::tformat("%s**", translated_ident);
-            return p.pos;
-        }
-    }
-
-    // Pointer to type.
-    {
-        Parsing p = orig;
-        String ident;
-        String space;
-        if (try p.ident(&ident) && try p.space(&space) && try p.str("*") && try p.space(&space))
-        {
-            String translated_ident = translate_type_ident(ident);
-            if (translated_ident == "") return TYPE_TRANSLATION_FAILED?;
+            String ident;
+            String space;
+            p.str("const")!;
+            p.space1(&space)!;
+            p.ident(&ident)!;
+            p.space(&space);
+            p.str("*")!;
+            p.space(&space);
+            String translated_ident = translate_type_ident(ident)!;
             *translated = string::tformat("%s*", translated_ident);
-            return p.pos;
-        }
-    }
-
-    // Just ident.
-    {
-        Parsing p = orig;
-        String ident;
-        String space;
-        if (try p.ident(&ident) && try p.space(&space))
+        }, translated)!;
+        // Pointer to constant pointer to type.
+        // For example `SDL_GPUBuffer *const *storage_buffers`.
+        ch.@variant(fn void?(Parsing* p, String* translated)
         {
-            String translated_ident = translate_type_ident(ident);
-            if (translated_ident == "") return TYPE_TRANSLATION_FAILED?;
+            String ident;
+            String space;
+            p.ident(&ident)!;
+            p.space(&space);
+            p.str("*")!;
+            p.space(&space);
+            p.str("const")!;
+            p.space(&space);
+            p.str("*")!;
+            p.space(&space);
+            String translated_ident = translate_type_ident(ident)!;
+            *translated = string::tformat("%s**", translated_ident);
+        }, translated)!;
+        // Pointer to pointer to type.
+        ch.@variant(fn void?(Parsing* p, String* translated)
+        {
+            String ident;
+            String space;
+            p.ident(&ident)!;
+            p.space(&space);
+            p.str("**")!;
+            p.space(&space);
+            String translated_ident = translate_type_ident(ident)!;
+            *translated = string::tformat("%s**", translated_ident);
+        }, translated)!;
+        // Pointer to type.
+        ch.@variant(fn void?(Parsing* p, String* translated)
+        {
+            String ident;
+            String space;
+            p.ident(&ident)!;
+            p.space(&space);
+            p.str("*")!;
+            p.space(&space);
+            String translated_ident = translate_type_ident(ident)!;
+            *translated = string::tformat("%s*", translated_ident);
+        }, translated)!;
+        // Just ident.
+        ch.@variant(fn void?(Parsing* p, String* translated)
+        {
+            String ident;
+            String space;
+            p.ident(&ident)!;
+            p.space(&space);
+            String translated_ident = translate_type_ident(ident)!;
             *translated = translated_ident;
-            return p.pos;
-        }
-    }
-
-    return PARSING_FAILED?;
+        }, translated)!;
+    }!;
 }
 
 fn void? parse_and_translate_typedef(String line, String* translated_type, String* name)
 {
     Parsing p = { .line = line };
     p.str("typedef ")!;
-    p.pos = parse_and_translate_type(line, p.pos, translated_type)!;
+    p.parse_and_translate_type(translated_type)!;
     p.ident(name)!;
     String rest;
     p.rest(&rest);
@@ -731,11 +769,12 @@ fn void? generate(String input_file)
                 String translated_type;
                 String name;
                 String rest;
-                usz pos = parse_and_translate_type(line, 4, &translated_type)!;
+                Parsing p = { .line = line, .pos = 4 };
+                p.parse_and_translate_type(&translated_type)!;
+                usz pos = p.pos;
                 isz c_type_len = pos - 4;  // Including the space after it (if there was any).
                 isz c3_type_len = translated_type.len + 1;  // `+ 1` is for the space after it.
                 isz type_len_difference = c3_type_len - c_type_len;
-                Parsing p = { .line = line, .pos = pos };
                 p.ident(&name)!;
 
                 // Struct field is array.
@@ -825,7 +864,9 @@ fn void? generate(String input_file)
             usz return_type_end = line.index_of("SDLCALL ")!!;
             String return_type = line[20..return_type_end-1];
             String translated_return_type;
-            if (parse_and_translate_type(return_type, 0, &translated_return_type)! != return_type.len)
+            Parsing return_type_parsing = { .line = return_type };
+            return_type_parsing.parse_and_translate_type(&translated_return_type)!;
+            if (return_type_parsing.pos != return_type.len)
             {
                 abort("Translation '%s' of return type '%s' is incomplete", translated_return_type, return_type);
             }
@@ -867,7 +908,7 @@ fn void? generate(String input_file)
                 {
                     String translated_param_type;
                     String param_name;
-                    p.pos = parse_and_translate_type(p.line, p.pos, &translated_param_type)!;
+                    p.parse_and_translate_type(&translated_param_type)!;
                     p.ident(&param_name)!;
                     io::printf("%s %s", translated_param_type, param_name);
 
