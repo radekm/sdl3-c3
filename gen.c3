@@ -148,6 +148,9 @@ String[*] hidden_enums = {
     // `SDL_keycode.h`.
     "SDL_Keycode",
     "SDL_Keymod",
+
+    // `SDL_blendmode.h`.
+    "SDL_BlendMode",
 };
 
 String[*] hidden_enums_prefixes = {
@@ -166,7 +169,10 @@ String[*] hidden_enums_prefixes = {
 
     // `SDL_keycode.h`.
     "SDLK_",
-    "SDL_KMOD_"
+    "SDL_KMOD_",
+
+    // `SDL_blendmode.h`.
+    "SDL_BLENDMODE_",
 };
 
 fn bool is_hidden_enum_with_defines(String line, String* hidden_enum_name, String* hidden_enum_prefix)
