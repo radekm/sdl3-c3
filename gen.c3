@@ -1150,7 +1150,7 @@ fn void? generate(String input_file)
             i++;
         }
         // Exported function.
-        else if (line.starts_with("extern SDL_DECLSPEC "))
+        else if (line.starts_with("extern SDL_DECLSPEC ") && !line.contains(" SDL_PRINTF_VARARG_FUNC"))
         {
             usz return_type_end = line.index_of("SDLCALL ")!!;
             String return_type = line[20..return_type_end-1];
