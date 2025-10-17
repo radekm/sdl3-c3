@@ -58,8 +58,9 @@ enum SDL_EventType : const CInt
     DISPLAY_DESKTOP_MODE_CHANGED,  /**< Display has changed desktop mode */
     DISPLAY_CURRENT_MODE_CHANGED,  /**< Display has changed current mode */
     DISPLAY_CONTENT_SCALE_CHANGED,  /**< Display has changed content scale */
+    DISPLAY_USABLE_BOUNDS_CHANGED,  /**< Display has changed usable bounds */
     DISPLAY_FIRST = SDL_EVENT_DISPLAY_ORIENTATION,
-    DISPLAY_LAST = SDL_EVENT_DISPLAY_CONTENT_SCALE_CHANGED,
+    DISPLAY_LAST = SDL_EVENT_DISPLAY_USABLE_BOUNDS_CHANGED,
 
     /* Window events */
     /* 0x200 was SDL_WINDOWEVENT, reserve the number for sdl2-compat */
@@ -106,6 +107,8 @@ enum SDL_EventType : const CInt
     KEYBOARD_ADDED,  /**< A new keyboard has been inserted into the system */
     KEYBOARD_REMOVED,  /**< A keyboard has been removed */
     TEXT_EDITING_CANDIDATES,  /**< Keyboard text editing candidates */
+    SCREEN_KEYBOARD_SHOWN,  /**< The on-screen keyboard has been shown */
+    SCREEN_KEYBOARD_HIDDEN,  /**< The on-screen keyboard has been hidden */
 
     /* Mouse events */
     MOUSE_MOTION = 0x400,  /**< Mouse moved */
@@ -146,10 +149,15 @@ enum SDL_EventType : const CInt
     FINGER_MOTION,
     FINGER_CANCELED,
 
+    /* Pinch events */
+    PINCH_BEGIN = 0x710,  /**< Pinch gesture started */
+    PINCH_UPDATE,  /**< Pinch gesture updated */
+    PINCH_END,  /**< Pinch gesture ended */
+
     /* 0x800, 0x801, and 0x802 were the Gesture events from SDL2. Do not reuse these values! sdl2-compat needs them! */
 
     /* Clipboard events */
-    CLIPBOARD_UPDATE = 0x900,  /**< The clipboard or primary selection changed */
+    CLIPBOARD_UPDATE = 0x900,  /**< The clipboard changed */
 
     /* Drag and drop events */
     DROP_FILE = 0x1000,  /**< The system requests a file open */
@@ -220,7 +228,7 @@ struct SDL_CommonEvent
 
 struct SDL_DisplayEvent
 {
-    SDL_EventType type;  /**< SDL_DISPLAYEVENT_* */
+    SDL_EventType type;  /**< SDL_EVENT_DISPLAY_* */
     uint reserved;
     ulong timestamp;  /**< In nanoseconds, populated using SDL_GetTicksNS() */
     SDL_DisplayID displayID;  /**< The associated display */
@@ -530,6 +538,15 @@ struct SDL_TouchFingerEvent
     SDL_WindowID windowID;  /**< The window underneath the finger, if any */
 }
 
+struct SDL_PinchFingerEvent
+{
+    SDL_EventType type;  /**< ::SDL_EVENT_PINCH_BEGIN or ::SDL_EVENT_PINCH_UPDATE or ::SDL_EVENT_PINCH_END */
+    uint reserved;
+    ulong timestamp;  /**< In nanoseconds, populated using SDL_GetTicksNS() */
+    float scale;  /**< The scale change since the last SDL_EVENT_PINCH_UPDATE. Scale < 1 is "zoom out". Scale > 1 is "zoom in". */
+    SDL_WindowID windowID;  /**< The window underneath the finger, if any */
+}
+
 struct SDL_PenProximityEvent
 {
     SDL_EventType type;  /**< SDL_EVENT_PEN_PROXIMITY_IN or SDL_EVENT_PEN_PROXIMITY_OUT */
@@ -634,7 +651,7 @@ struct SDL_QuitEvent
 
 struct SDL_UserEvent
 {
-    uint type;  /**< SDL_EVENT_USER through SDL_EVENT_LAST-1, Uint32 because these are not in the SDL_EventType enumeration */
+    uint type;  /**< SDL_EVENT_USER through SDL_EVENT_LAST, Uint32 because these are not in the SDL_EventType enumeration */
     uint reserved;
     ulong timestamp;  /**< In nanoseconds, populated using SDL_GetTicksNS() */
     SDL_WindowID windowID;  /**< The associated window if any */
@@ -676,6 +693,7 @@ union SDL_Event
     SDL_QuitEvent quit;  /**< Quit request event data */
     SDL_UserEvent user;  /**< Custom event data */
     SDL_TouchFingerEvent tfinger;  /**< Touch finger event data */
+    SDL_PinchFingerEvent pinch;  /**< Pinch event data */
     SDL_PenProximityEvent pproximity;  /**< Pen proximity event data */
     SDL_PenTouchEvent ptouch;  /**< Pen tip touching event data */
     SDL_PenMotionEvent pmotion;  /**< Pen motion event data */
