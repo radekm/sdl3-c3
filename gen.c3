@@ -669,9 +669,9 @@ enum EnumParserMode
 fn EnumLines? parse_enum_items(String[] lines, usz* i)
 {
     List{EnumLineKind} enum_line_kinds;
-    enum_line_kinds.tinit();
+    enum_line_kinds.tinit(128);
     List{EnumLine} enum_lines;
-    enum_lines.tinit();
+    enum_lines.tinit(128);
     EnumParserMode mode;
     while PROCESS_LINE: (true)
     {
@@ -725,7 +725,7 @@ fn EnumLines? parse_enum_items(String[] lines, usz* i)
 
 
                         String comment;
-                        bool comment_ends;
+                        bool comment_starts;
                         p.@optional(fn void?(Parsing* p, String* out_comment, bool* out_comment_starts)
                         {
                             usz start_pos = p.pos;
@@ -734,11 +734,12 @@ fn EnumLines? parse_enum_items(String[] lines, usz* i)
                             p.rest_until_str("*/", &rest);
                             *out_comment_starts = !@ok(p.str("*/"));
                             *out_comment = p.line[start_pos:p.pos-start_pos];
-                        }, &comment, out_comment_starts)!;
+                        }, &comment, &comment_starts)!;
 
                         p.ignore_space();
                         p.ensure_eol()!;
 
+                        *out_comment_starts = comment_starts;
                         enum_line_kinds.push(ITEM);
                         enum_lines.push({ .item = { .name = name, .value = value, .comment_starting_after_item = comment } });
 
@@ -798,6 +799,140 @@ fn EnumLines? parse_enum_items(String[] lines, usz* i)
         (*i)++;
     }
     EnumLines result = { .kinds = enum_line_kinds.array_view(), .lines = enum_lines.array_view() };
+    return result;
+}
+
+struct StructFieldLine
+{
+    String type;
+    String name;
+    // This comment may not be closed.
+    // So it may continue on `VERBATIM` lines after the field.
+    String comment_starting_after_field;
+}
+
+enum StructLineKind
+{
+    VERBATIM,
+    ITEM,
+}
+
+union StructLine
+{
+    VerbatimLine verbatim;
+    StructFieldLine field;
+}
+
+struct StructLines
+{
+    StructLineKind[] kinds;
+    StructLine[] lines;
+}
+
+enum StructParserMode
+{
+    NORMAL,
+    IN_COMMENT,
+}
+
+fn StructLines? parse_struct_or_union_fields(String[] lines, usz* i)
+{
+    List{StructLineKind} struct_line_kinds;
+    struct_line_kinds.tinit(128);
+    List{StructLine} struct_lines;
+    struct_lines.tinit(128);
+    StructParserMode mode;
+    while PROCESS_LINE: (true)
+    {
+        Parsing p = { .line = lines[*i] };
+
+        switch (mode)
+        {
+            case NORMAL:
+                // End of struct (only in normal mode).
+                if (p.line.starts_with("}")) break PROCESS_LINE;
+
+                bool comment_starts;
+                p.@choose(; ch)
+                {
+                    // Line with struct field.
+                    ch.@variant(fn void?(Parsing* p, List{StructLineKind}* struct_line_kinds, List{StructLine}* struct_lines, bool *out_comment_starts)
+                    {
+                        String type;
+                        String name;
+                        p.ignore_space();
+                        // Consumes spaces after the type so it must not be followed by `ignore_space1`.
+                        p.parse_and_translate_type(&type)!;
+                        p.ident(&name)!;
+
+                        // Struct field is array.
+                        // Read array size and add it into `name`.
+                        if (try p.str("["))
+                        {
+                            String array_size;
+                            p.rest_until_char(']', &array_size);
+                            p.str("]")!;
+                            type = string::tformat("%s[%s]", type, array_size);
+                        }
+                        p.str(";")!;
+
+                        p.ignore_space();
+
+                        String comment;
+                        bool comment_starts;
+                        p.@optional(fn void?(Parsing* p, String* out_comment, bool* out_comment_starts)
+                        {
+                            usz start_pos = p.pos;
+                            String rest;
+                            p.str("/*")!;
+                            p.rest_until_str("*/", &rest);
+                            *out_comment_starts = !@ok(p.str("*/"));
+                            *out_comment = p.line[start_pos:p.pos-start_pos];
+                        }, &comment, &comment_starts)!;
+
+                        p.ignore_space();
+                        p.ensure_eol()!;
+
+                        *out_comment_starts = comment_starts;
+                        struct_line_kinds.push(ITEM);
+                        struct_lines.push({ .field = { .type = type, .name = name, .comment_starting_after_field = comment } });
+
+                    }, &struct_line_kinds, &struct_lines, &comment_starts)!;
+                    // Line with comment or empty line.
+                    ch.@variant(fn void?(Parsing* p, List{StructLineKind}* struct_line_kinds, List{StructLine}* struct_lines, bool *out_comment_starts)
+                    {
+                        // We don't write to `out_comment_starts` until the whole line has been successfully parsed.
+                        bool comment_starts;
+                        p.ignore_space();
+                        p.@optional(fn void?(Parsing* p, bool* out_comment_starts)
+                        {
+                            String rest;
+                            p.str("/*")!;
+                            p.rest_until_str("*/", &rest);
+                            *out_comment_starts = !@ok(p.str("*/"));
+                        }, &comment_starts)!;
+
+                        p.ensure_eol()!;
+
+                        *out_comment_starts = comment_starts;
+                        struct_line_kinds.push(VERBATIM);
+                        struct_lines.push({ .verbatim = { .line = p.line } });
+
+                    }, &struct_line_kinds, &struct_lines, &comment_starts)!;
+                }!;
+                if (comment_starts) mode = IN_COMMENT;
+            case IN_COMMENT:
+                String rest;
+                p.rest_until_str("*/", &rest);
+                if(@ok(p.str("*/"))) mode = NORMAL;
+                p.ensure_eol()!;
+
+                struct_line_kinds.push(VERBATIM);
+                struct_lines.push({ .verbatim = { .line = p.line } });
+        }
+        (*i)++;
+    }
+    StructLines result = { .kinds = struct_line_kinds.array_view(), .lines = struct_lines.array_view() };
     return result;
 }
 
@@ -958,100 +1093,31 @@ fn void? generate(String input_file)
             if (line != "{") abort("Expected { which opens struct, got: '%s'", line);
             io::printfn("{");
 
-            // Read struct fields.
-            line = lines[++i];
-            List{String} translated_types;
-            translated_types.tinit(128);
-            // How much has type length increased. If negative then new type length is shorter.
-            List{isz} type_len_differences;  // `c3_type_len` - `c_type_len`.
-            type_len_differences.tinit(128);
-            List{String} names;
-            names.tinit(128);
-            List{String} rests;
-            rests.tinit(128);
-            List{String[]} lines_below_fields;  // Lines below fields where comments from `rests` continue.
-            lines_below_fields.tinit(128);
-            isz max_len_difference;
-            while (!line.starts_with("}"))
+            // Read struct or union fields.
+            i++;
+            StructLines? struct_lines = parse_struct_or_union_fields(lines, &i);
+            if (catch excuse = struct_lines)
             {
-                // We assume that that are exactly four spaces at the beginning (not more).
-                if (!line.starts_with("    ")) abort("Expected four spaces before each struct field, got: '%s'", line);
-
-                String translated_type;
-                String name;
-                String rest;
-                Parsing p = { .line = line, .pos = 4 };
-                p.parse_and_translate_type(&translated_type)!;
-                usz pos = p.pos;
-                isz c_type_len = pos - 4;  // Including the space after it (if there was any).
-                isz c3_type_len = translated_type.len + 1;  // `+ 1` is for the space after it.
-                isz type_len_difference = c3_type_len - c_type_len;
-                p.ident(&name)!;
-
-                // Struct field is array.
-                // Read array size and add it into `name`.
-                if (try p.str("["))
-                {
-                    String array_size;
-                    p.rest_until_char(']', &array_size);
-                    p.str("]")!;
-                    name = line[pos:p.pos-pos];
-                }
-
-                p.str(";")!;
-                p.rest(&rest);
-
-                translated_types.push(translated_type);
-                type_len_differences.push(type_len_difference);
-                names.push(name);
-                rests.push(rest);
-                max_len_difference = max(max_len_difference, type_len_difference);
-
-                usz first_line = i + 1;
-                String[] lines_below_field;
-                // Comment starts in `rest` but doesn't end on current line.
-                // We have to read lines below.
-                if (rest.contains("/*") && !rest.ends_with("*/"))
-                {
-                    while (!lines[++i].ends_with("*/")) {}
-                }
-                // Save empty lines after the field.
-                while (lines[++i] == "") {}
-                lines_below_field = lines[first_line:i-first_line];
-                lines_below_fields.push(lines_below_field);
-                line = lines[i];
+                abort("Parsing struct or union fields failed on line %d: '%s'", i, lines[i]);
             }
 
-            foreach (j, translated_type : translated_types)
+            foreach (j, kind : struct_lines.kinds)
             {
-                isz type_len_difference = type_len_differences[j];
-                String name = names[j];
-                String rest = rests[j];
-                String[] lines_below_field = lines_below_fields[j];
-                io::printf("    %s %s;", translated_type, name);
-                // Ensure that rest has same alignment even if translated types have different lengths.
-                if (rest.len > 0)
+                StructLine struct_line = struct_lines.lines[j];
+                switch (kind)
                 {
-                    isz spaces_to_add = max_len_difference - type_len_difference;
-                    while (spaces_to_add-- > 0)
-                    {
-                        io::printf(" ");
-                    }
-                }
-                io::printfn("%s", rest);
-                foreach (l : lines_below_field)
-                {
-                    // Add spaces to preserve alignment.
-                    isz spaces_to_add = max_len_difference;
-                    while (spaces_to_add-- > 0)
-                    {
-                        io::printf(" ");
-                    }
-
-                    io::printfn("%s", l);
+                    case VERBATIM:
+                        io::printfn("%s", struct_line.verbatim.line);
+                    case ITEM:
+                        StructFieldLine field = struct_line.field;
+                        io::printf("    %s %s;", field.type, field.name);
+                        if (field.comment_starting_after_field != "") io::printf("  %s", field.comment_starting_after_field);
+                        io::printfn("");
                 }
             }
 
+            line = lines[i];
+            if (!line.starts_with("}")) abort("Expected } which closes struct or union, got: '%s'", line);
             io::printfn("}");
             i++;  // Skip line with closing brace.
         }

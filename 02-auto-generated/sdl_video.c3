@@ -28,17 +28,17 @@ enum SDL_SystemTheme : const CInt
 
 struct SDL_DisplayMode
 {
-    SDL_DisplayID displayID;         /**< the display this mode is associated with */
-    SDL_PixelFormat format;          /**< pixel format */
-    CInt w;                          /**< width */
-    CInt h;                          /**< height */
-    float pixel_density;             /**< scale converting size to pixels (e.g. a 1920x1080 mode with 2.0 scale would have 3840x2160 pixels) */
-    float refresh_rate;              /**< refresh rate (or 0.0f for unspecified) */
-    CInt refresh_rate_numerator;     /**< precise refresh rate numerator (or 0 for unspecified) */
-    CInt refresh_rate_denominator;   /**< precise refresh rate denominator */
- 
-    SDL_DisplayModeData* internal;   /**< Private */
- 
+    SDL_DisplayID displayID;  /**< the display this mode is associated with */
+    SDL_PixelFormat format;  /**< pixel format */
+    CInt w;  /**< width */
+    CInt h;  /**< height */
+    float pixel_density;  /**< scale converting size to pixels (e.g. a 1920x1080 mode with 2.0 scale would have 3840x2160 pixels) */
+    float refresh_rate;  /**< refresh rate (or 0.0f for unspecified) */
+    CInt refresh_rate_numerator;  /**< precise refresh rate numerator (or 0 for unspecified) */
+    CInt refresh_rate_denominator;  /**< precise refresh rate denominator */
+
+    SDL_DisplayModeData* internal;  /**< Private */
+
 }
 
 enum SDL_DisplayOrientation : const CInt

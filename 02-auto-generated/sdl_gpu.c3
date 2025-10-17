@@ -437,10 +437,10 @@ enum SDL_GPUSwapchainComposition : const CInt
 
 struct SDL_GPUViewport
 {
-    float x;          /**< The left offset of the viewport. */
-    float y;          /**< The top offset of the viewport. */
-    float w;          /**< The width of the viewport. */
-    float h;          /**< The height of the viewport. */
+    float x;  /**< The left offset of the viewport. */
+    float y;  /**< The top offset of the viewport. */
+    float w;  /**< The width of the viewport. */
+    float h;  /**< The height of the viewport. */
     float min_depth;  /**< The minimum depth of the viewport. */
     float max_depth;  /**< The maximum depth of the viewport. */
 }
@@ -448,154 +448,154 @@ struct SDL_GPUViewport
 struct SDL_GPUTextureTransferInfo
 {
     SDL_GPUTransferBuffer* transfer_buffer;  /**< The transfer buffer used in the transfer operation. */
-    uint offset;                             /**< The starting byte of the image data in the transfer buffer. */
-    uint pixels_per_row;                     /**< The number of pixels from one row to the next. */
-    uint rows_per_layer;                     /**< The number of rows from one layer/depth-slice to the next. */
+    uint offset;  /**< The starting byte of the image data in the transfer buffer. */
+    uint pixels_per_row;  /**< The number of pixels from one row to the next. */
+    uint rows_per_layer;  /**< The number of rows from one layer/depth-slice to the next. */
 }
 
 struct SDL_GPUTransferBufferLocation
 {
     SDL_GPUTransferBuffer* transfer_buffer;  /**< The transfer buffer used in the transfer operation. */
-    uint offset;                             /**< The starting byte of the buffer data in the transfer buffer. */
+    uint offset;  /**< The starting byte of the buffer data in the transfer buffer. */
 }
 
 struct SDL_GPUTextureLocation
 {
     SDL_GPUTexture* texture;  /**< The texture used in the copy operation. */
-    uint mip_level;           /**< The mip level index of the location. */
-    uint layer;               /**< The layer index of the location. */
-    uint x;                   /**< The left offset of the location. */
-    uint y;                   /**< The top offset of the location. */
-    uint z;                   /**< The front offset of the location. */
+    uint mip_level;  /**< The mip level index of the location. */
+    uint layer;  /**< The layer index of the location. */
+    uint x;  /**< The left offset of the location. */
+    uint y;  /**< The top offset of the location. */
+    uint z;  /**< The front offset of the location. */
 }
 
 struct SDL_GPUTextureRegion
 {
     SDL_GPUTexture* texture;  /**< The texture used in the copy operation. */
-    uint mip_level;           /**< The mip level index to transfer. */
-    uint layer;               /**< The layer index to transfer. */
-    uint x;                   /**< The left offset of the region. */
-    uint y;                   /**< The top offset of the region. */
-    uint z;                   /**< The front offset of the region. */
-    uint w;                   /**< The width of the region. */
-    uint h;                   /**< The height of the region. */
-    uint d;                   /**< The depth of the region. */
+    uint mip_level;  /**< The mip level index to transfer. */
+    uint layer;  /**< The layer index to transfer. */
+    uint x;  /**< The left offset of the region. */
+    uint y;  /**< The top offset of the region. */
+    uint z;  /**< The front offset of the region. */
+    uint w;  /**< The width of the region. */
+    uint h;  /**< The height of the region. */
+    uint d;  /**< The depth of the region. */
 }
 
 struct SDL_GPUBlitRegion
 {
-    SDL_GPUTexture* texture;      /**< The texture. */
-    uint mip_level;               /**< The mip level index of the region. */
-    uint layer_or_depth_plane;    /**< The layer index or depth plane of the region. This value is treated as a layer index on 2D array and cube textures, and as a depth plane on 3D textures. */
-    uint x;                       /**< The left offset of the region. */
-    uint y;                       /**< The top offset of the region.  */
-    uint w;                       /**< The width of the region. */
-    uint h;                       /**< The height of the region. */
+    SDL_GPUTexture* texture;  /**< The texture. */
+    uint mip_level;  /**< The mip level index of the region. */
+    uint layer_or_depth_plane;  /**< The layer index or depth plane of the region. This value is treated as a layer index on 2D array and cube textures, and as a depth plane on 3D textures. */
+    uint x;  /**< The left offset of the region. */
+    uint y;  /**< The top offset of the region.  */
+    uint w;  /**< The width of the region. */
+    uint h;  /**< The height of the region. */
 }
 
 struct SDL_GPUBufferLocation
 {
     SDL_GPUBuffer* buffer;  /**< The buffer. */
-    uint offset;            /**< The starting byte within the buffer. */
+    uint offset;  /**< The starting byte within the buffer. */
 }
 
 struct SDL_GPUBufferRegion
 {
     SDL_GPUBuffer* buffer;  /**< The buffer. */
-    uint offset;            /**< The starting byte within the buffer. */
-    uint size;              /**< The size in bytes of the region. */
+    uint offset;  /**< The starting byte within the buffer. */
+    uint size;  /**< The size in bytes of the region. */
 }
 
 struct SDL_GPUIndirectDrawCommand
 {
-    uint num_vertices;     /**< The number of vertices to draw. */
-    uint num_instances;    /**< The number of instances to draw. */
-    uint first_vertex;     /**< The index of the first vertex to draw. */
-    uint first_instance;   /**< The ID of the first instance to draw. */
+    uint num_vertices;  /**< The number of vertices to draw. */
+    uint num_instances;  /**< The number of instances to draw. */
+    uint first_vertex;  /**< The index of the first vertex to draw. */
+    uint first_instance;  /**< The ID of the first instance to draw. */
 }
 
 struct SDL_GPUIndexedIndirectDrawCommand
 {
-    uint num_indices;      /**< The number of indices to draw per instance. */
-    uint num_instances;    /**< The number of instances to draw. */
-    uint first_index;      /**< The base index within the index buffer. */
-    int vertex_offset;     /**< The value added to the vertex index before indexing into the vertex buffer. */
-    uint first_instance;   /**< The ID of the first instance to draw. */
+    uint num_indices;  /**< The number of indices to draw per instance. */
+    uint num_instances;  /**< The number of instances to draw. */
+    uint first_index;  /**< The base index within the index buffer. */
+    int vertex_offset;  /**< The value added to the vertex index before indexing into the vertex buffer. */
+    uint first_instance;  /**< The ID of the first instance to draw. */
 }
 
 struct SDL_GPUIndirectDispatchCommand
 {
-    uint groupcount_x;    /**< The number of local workgroups to dispatch in the X dimension. */
-    uint groupcount_y;    /**< The number of local workgroups to dispatch in the Y dimension. */
-    uint groupcount_z;    /**< The number of local workgroups to dispatch in the Z dimension. */
+    uint groupcount_x;  /**< The number of local workgroups to dispatch in the X dimension. */
+    uint groupcount_y;  /**< The number of local workgroups to dispatch in the Y dimension. */
+    uint groupcount_z;  /**< The number of local workgroups to dispatch in the Z dimension. */
 }
 
 /* State structures */
 
 struct SDL_GPUSamplerCreateInfo
 {
-    SDL_GPUFilter min_filter;                  /**< The minification filter to apply to lookups. */
-    SDL_GPUFilter mag_filter;                  /**< The magnification filter to apply to lookups. */
-    SDL_GPUSamplerMipmapMode mipmap_mode;      /**< The mipmap filter to apply to lookups. */
+    SDL_GPUFilter min_filter;  /**< The minification filter to apply to lookups. */
+    SDL_GPUFilter mag_filter;  /**< The magnification filter to apply to lookups. */
+    SDL_GPUSamplerMipmapMode mipmap_mode;  /**< The mipmap filter to apply to lookups. */
     SDL_GPUSamplerAddressMode address_mode_u;  /**< The addressing mode for U coordinates outside [0, 1). */
     SDL_GPUSamplerAddressMode address_mode_v;  /**< The addressing mode for V coordinates outside [0, 1). */
     SDL_GPUSamplerAddressMode address_mode_w;  /**< The addressing mode for W coordinates outside [0, 1). */
-    float mip_lod_bias;                        /**< The bias to be added to mipmap LOD calculation. */
-    float max_anisotropy;                      /**< The anisotropy value clamp used by the sampler. If enable_anisotropy is false, this is ignored. */
-    SDL_GPUCompareOp compare_op;               /**< The comparison operator to apply to fetched data before filtering. */
-    float min_lod;                             /**< Clamps the minimum of the computed LOD value. */
-    float max_lod;                             /**< Clamps the maximum of the computed LOD value. */
-    bool enable_anisotropy;                    /**< true to enable anisotropic filtering. */
-    bool enable_compare;                       /**< true to enable comparison against a reference value during lookups. */
+    float mip_lod_bias;  /**< The bias to be added to mipmap LOD calculation. */
+    float max_anisotropy;  /**< The anisotropy value clamp used by the sampler. If enable_anisotropy is false, this is ignored. */
+    SDL_GPUCompareOp compare_op;  /**< The comparison operator to apply to fetched data before filtering. */
+    float min_lod;  /**< Clamps the minimum of the computed LOD value. */
+    float max_lod;  /**< Clamps the maximum of the computed LOD value. */
+    bool enable_anisotropy;  /**< true to enable anisotropic filtering. */
+    bool enable_compare;  /**< true to enable comparison against a reference value during lookups. */
     char padding1;
     char padding2;
 
-    SDL_PropertiesID props;                    /**< A properties ID for extensions. Should be 0 if no extensions are needed. */
+    SDL_PropertiesID props;  /**< A properties ID for extensions. Should be 0 if no extensions are needed. */
 }
 
 struct SDL_GPUVertexBufferDescription
 {
-    uint slot;                          /**< The binding slot of the vertex buffer. */
-    uint pitch;                         /**< The size of a single element + the offset between elements. */
+    uint slot;  /**< The binding slot of the vertex buffer. */
+    uint pitch;  /**< The size of a single element + the offset between elements. */
     SDL_GPUVertexInputRate input_rate;  /**< Whether attribute addressing is a function of the vertex index or instance index. */
-    uint instance_step_rate;            /**< Reserved for future use. Must be set to 0. */
+    uint instance_step_rate;  /**< Reserved for future use. Must be set to 0. */
 }
 
 struct SDL_GPUVertexAttribute
 {
-    uint location;                      /**< The shader input location index. */
-    uint buffer_slot;                   /**< The binding slot of the associated vertex buffer. */
+    uint location;  /**< The shader input location index. */
+    uint buffer_slot;  /**< The binding slot of the associated vertex buffer. */
     SDL_GPUVertexElementFormat format;  /**< The size and type of the attribute data. */
-    uint offset;                        /**< The byte offset of this attribute relative to the start of the vertex element. */
+    uint offset;  /**< The byte offset of this attribute relative to the start of the vertex element. */
 }
 
 struct SDL_GPUVertexInputState
 {
-    SDL_GPUVertexBufferDescription* vertex_buffer_descriptions;       /**< A pointer to an array of vertex buffer descriptions. */
-    uint num_vertex_buffers;                                          /**< The number of vertex buffer descriptions in the above array. */
-    SDL_GPUVertexAttribute* vertex_attributes;                        /**< A pointer to an array of vertex attribute descriptions. */
-    uint num_vertex_attributes;                                       /**< The number of vertex attribute descriptions in the above array. */
+    SDL_GPUVertexBufferDescription* vertex_buffer_descriptions;  /**< A pointer to an array of vertex buffer descriptions. */
+    uint num_vertex_buffers;  /**< The number of vertex buffer descriptions in the above array. */
+    SDL_GPUVertexAttribute* vertex_attributes;  /**< A pointer to an array of vertex attribute descriptions. */
+    uint num_vertex_attributes;  /**< The number of vertex attribute descriptions in the above array. */
 }
 
 struct SDL_GPUStencilOpState
 {
-    SDL_GPUStencilOp fail_op;        /**< The action performed on samples that fail the stencil test. */
-    SDL_GPUStencilOp pass_op;        /**< The action performed on samples that pass the depth and stencil tests. */
+    SDL_GPUStencilOp fail_op;  /**< The action performed on samples that fail the stencil test. */
+    SDL_GPUStencilOp pass_op;  /**< The action performed on samples that pass the depth and stencil tests. */
     SDL_GPUStencilOp depth_fail_op;  /**< The action performed on samples that pass the stencil test and fail the depth test. */
-    SDL_GPUCompareOp compare_op;     /**< The comparison operator used in the stencil test. */
+    SDL_GPUCompareOp compare_op;  /**< The comparison operator used in the stencil test. */
 }
 
 struct SDL_GPUColorTargetBlendState
 {
-    SDL_GPUBlendFactor src_color_blendfactor;     /**< The value to be multiplied by the source RGB value. */
-    SDL_GPUBlendFactor dst_color_blendfactor;     /**< The value to be multiplied by the destination RGB value. */
-    SDL_GPUBlendOp color_blend_op;                /**< The blend operation for the RGB components. */
-    SDL_GPUBlendFactor src_alpha_blendfactor;     /**< The value to be multiplied by the source alpha. */
-    SDL_GPUBlendFactor dst_alpha_blendfactor;     /**< The value to be multiplied by the destination alpha. */
-    SDL_GPUBlendOp alpha_blend_op;                /**< The blend operation for the alpha component. */
+    SDL_GPUBlendFactor src_color_blendfactor;  /**< The value to be multiplied by the source RGB value. */
+    SDL_GPUBlendFactor dst_color_blendfactor;  /**< The value to be multiplied by the destination RGB value. */
+    SDL_GPUBlendOp color_blend_op;  /**< The blend operation for the RGB components. */
+    SDL_GPUBlendFactor src_alpha_blendfactor;  /**< The value to be multiplied by the source alpha. */
+    SDL_GPUBlendFactor dst_alpha_blendfactor;  /**< The value to be multiplied by the destination alpha. */
+    SDL_GPUBlendOp alpha_blend_op;  /**< The blend operation for the alpha component. */
     SDL_GPUColorComponentFlags color_write_mask;  /**< A bitmask specifying which of the RGBA components are enabled for writing. Writes to all channels if enable_color_write_mask is false. */
-    bool enable_blend;                            /**< Whether blending is enabled for the color target. */
-    bool enable_color_write_mask;                 /**< Whether the color write mask is enabled. */
+    bool enable_blend;  /**< Whether blending is enabled for the color target. */
+    bool enable_color_write_mask;  /**< Whether the color write mask is enabled. */
     char padding1;
     char padding2;
 }
@@ -603,61 +603,61 @@ struct SDL_GPUColorTargetBlendState
 
 struct SDL_GPUShaderCreateInfo
 {
-    usz code_size;                /**< The size in bytes of the code pointed to. */
-    char* code;                   /**< A pointer to shader code. */
-    ZString entrypoint;           /**< A pointer to a null-terminated UTF-8 string specifying the entry point function name for the shader. */
-    SDL_GPUShaderFormat format;   /**< The format of the shader code. */
-    SDL_GPUShaderStage stage;     /**< The stage the shader program corresponds to. */
-    uint num_samplers;            /**< The number of samplers defined in the shader. */
-    uint num_storage_textures;    /**< The number of storage textures defined in the shader. */
-    uint num_storage_buffers;     /**< The number of storage buffers defined in the shader. */
-    uint num_uniform_buffers;     /**< The number of uniform buffers defined in the shader. */
+    usz code_size;  /**< The size in bytes of the code pointed to. */
+    char* code;  /**< A pointer to shader code. */
+    ZString entrypoint;  /**< A pointer to a null-terminated UTF-8 string specifying the entry point function name for the shader. */
+    SDL_GPUShaderFormat format;  /**< The format of the shader code. */
+    SDL_GPUShaderStage stage;  /**< The stage the shader program corresponds to. */
+    uint num_samplers;  /**< The number of samplers defined in the shader. */
+    uint num_storage_textures;  /**< The number of storage textures defined in the shader. */
+    uint num_storage_buffers;  /**< The number of storage buffers defined in the shader. */
+    uint num_uniform_buffers;  /**< The number of uniform buffers defined in the shader. */
 
-    SDL_PropertiesID props;       /**< A properties ID for extensions. Should be 0 if no extensions are needed. */
+    SDL_PropertiesID props;  /**< A properties ID for extensions. Should be 0 if no extensions are needed. */
 }
 
 struct SDL_GPUTextureCreateInfo
 {
-    SDL_GPUTextureType type;          /**< The base dimensionality of the texture. */
-    SDL_GPUTextureFormat format;      /**< The pixel format of the texture. */
-    SDL_GPUTextureUsageFlags usage;   /**< How the texture is intended to be used by the client. */
-    uint width;                       /**< The width of the texture. */
-    uint height;                      /**< The height of the texture. */
-    uint layer_count_or_depth;        /**< The layer count or depth of the texture. This value is treated as a layer count on 2D array textures, and as a depth value on 3D textures. */
-    uint num_levels;                  /**< The number of mip levels in the texture. */
+    SDL_GPUTextureType type;  /**< The base dimensionality of the texture. */
+    SDL_GPUTextureFormat format;  /**< The pixel format of the texture. */
+    SDL_GPUTextureUsageFlags usage;  /**< How the texture is intended to be used by the client. */
+    uint width;  /**< The width of the texture. */
+    uint height;  /**< The height of the texture. */
+    uint layer_count_or_depth;  /**< The layer count or depth of the texture. This value is treated as a layer count on 2D array textures, and as a depth value on 3D textures. */
+    uint num_levels;  /**< The number of mip levels in the texture. */
     SDL_GPUSampleCount sample_count;  /**< The number of samples per texel. Only applies if the texture is used as a render target. */
 
-    SDL_PropertiesID props;           /**< A properties ID for extensions. Should be 0 if no extensions are needed. */
+    SDL_PropertiesID props;  /**< A properties ID for extensions. Should be 0 if no extensions are needed. */
 }
 
 struct SDL_GPUBufferCreateInfo
 {
     SDL_GPUBufferUsageFlags usage;  /**< How the buffer is intended to be used by the client. */
-    uint size;                      /**< The size in bytes of the buffer. */
+    uint size;  /**< The size in bytes of the buffer. */
 
-    SDL_PropertiesID props;         /**< A properties ID for extensions. Should be 0 if no extensions are needed. */
+    SDL_PropertiesID props;  /**< A properties ID for extensions. Should be 0 if no extensions are needed. */
 }
 
 struct SDL_GPUTransferBufferCreateInfo
 {
     SDL_GPUTransferBufferUsage usage;  /**< How the transfer buffer is intended to be used by the client. */
-    uint size;                         /**< The size in bytes of the transfer buffer. */
+    uint size;  /**< The size in bytes of the transfer buffer. */
 
-    SDL_PropertiesID props;            /**< A properties ID for extensions. Should be 0 if no extensions are needed. */
+    SDL_PropertiesID props;  /**< A properties ID for extensions. Should be 0 if no extensions are needed. */
 }
 
 /* Pipeline state structures */
 
 struct SDL_GPURasterizerState
 {
-    SDL_GPUFillMode fill_mode;         /**< Whether polygons will be filled in or drawn as lines. */
-    SDL_GPUCullMode cull_mode;         /**< The facing direction in which triangles will be culled. */
-    SDL_GPUFrontFace front_face;       /**< The vertex winding that will cause a triangle to be determined as front-facing. */
+    SDL_GPUFillMode fill_mode;  /**< Whether polygons will be filled in or drawn as lines. */
+    SDL_GPUCullMode cull_mode;  /**< The facing direction in which triangles will be culled. */
+    SDL_GPUFrontFace front_face;  /**< The vertex winding that will cause a triangle to be determined as front-facing. */
     float depth_bias_constant_factor;  /**< A scalar factor controlling the depth value added to each fragment. */
-    float depth_bias_clamp;            /**< The maximum depth bias of a fragment. */
-    float depth_bias_slope_factor;     /**< A scalar factor applied to a fragment's slope in depth calculations. */
-    bool enable_depth_bias;            /**< true to bias fragment depth values. */
-    bool enable_depth_clip;            /**< true to enable depth clip, false to enable depth clamp. */
+    float depth_bias_clamp;  /**< The maximum depth bias of a fragment. */
+    float depth_bias_slope_factor;  /**< A scalar factor applied to a fragment's slope in depth calculations. */
+    bool enable_depth_bias;  /**< true to bias fragment depth values. */
+    bool enable_depth_clip;  /**< true to enable depth clip, false to enable depth clamp. */
     char padding1;
     char padding2;
 }
@@ -665,23 +665,23 @@ struct SDL_GPURasterizerState
 struct SDL_GPUMultisampleState
 {
     SDL_GPUSampleCount sample_count;  /**< The number of samples to be used in rasterization. */
-    uint sample_mask;                 /**< Reserved for future use. Must be set to 0. */
-    bool enable_mask;                 /**< Reserved for future use. Must be set to false. */
-    bool enable_alpha_to_coverage;    /**< true enables the alpha-to-coverage feature. */
+    uint sample_mask;  /**< Reserved for future use. Must be set to 0. */
+    bool enable_mask;  /**< Reserved for future use. Must be set to false. */
+    bool enable_alpha_to_coverage;  /**< true enables the alpha-to-coverage feature. */
     char padding2;
     char padding3;
 }
 
 struct SDL_GPUDepthStencilState
 {
-    SDL_GPUCompareOp compare_op;                /**< The comparison operator used for depth testing. */
-    SDL_GPUStencilOpState back_stencil_state;   /**< The stencil op state for back-facing triangles. */
+    SDL_GPUCompareOp compare_op;  /**< The comparison operator used for depth testing. */
+    SDL_GPUStencilOpState back_stencil_state;  /**< The stencil op state for back-facing triangles. */
     SDL_GPUStencilOpState front_stencil_state;  /**< The stencil op state for front-facing triangles. */
-    char compare_mask;                          /**< Selects the bits of the stencil values participating in the stencil test. */
-    char write_mask;                            /**< Selects the bits of the stencil values updated by the stencil test. */
-    bool enable_depth_test;                     /**< true enables the depth test. */
-    bool enable_depth_write;                    /**< true enables depth writes. Depth writes are always disabled when enable_depth_test is false. */
-    bool enable_stencil_test;                   /**< true enables the stencil test. */
+    char compare_mask;  /**< Selects the bits of the stencil values participating in the stencil test. */
+    char write_mask;  /**< Selects the bits of the stencil values updated by the stencil test. */
+    bool enable_depth_test;  /**< true enables the depth test. */
+    bool enable_depth_write;  /**< true enables depth writes. Depth writes are always disabled when enable_depth_test is false. */
+    bool enable_stencil_test;  /**< true enables the stencil test. */
     char padding1;
     char padding2;
     char padding3;
@@ -689,16 +689,16 @@ struct SDL_GPUDepthStencilState
 
 struct SDL_GPUColorTargetDescription
 {
-    SDL_GPUTextureFormat format;               /**< The pixel format of the texture to be used as a color target. */
+    SDL_GPUTextureFormat format;  /**< The pixel format of the texture to be used as a color target. */
     SDL_GPUColorTargetBlendState blend_state;  /**< The blend state to be used for the color target. */
 }
 
 struct SDL_GPUGraphicsPipelineTargetInfo
 {
-    SDL_GPUColorTargetDescription* color_target_descriptions;        /**< A pointer to an array of color target descriptions. */
-    uint num_color_targets;                                          /**< The number of color target descriptions in the above array. */
-    SDL_GPUTextureFormat depth_stencil_format;                       /**< The pixel format of the depth-stencil target. Ignored if has_depth_stencil_target is false. */
-    bool has_depth_stencil_target;                                   /**< true specifies that the pipeline uses a depth-stencil target. */
+    SDL_GPUColorTargetDescription* color_target_descriptions;  /**< A pointer to an array of color target descriptions. */
+    uint num_color_targets;  /**< The number of color target descriptions in the above array. */
+    SDL_GPUTextureFormat depth_stencil_format;  /**< The pixel format of the depth-stencil target. Ignored if has_depth_stencil_target is false. */
+    bool has_depth_stencil_target;  /**< true specifies that the pipeline uses a depth-stencil target. */
     char padding1;
     char padding2;
     char padding3;
@@ -706,77 +706,77 @@ struct SDL_GPUGraphicsPipelineTargetInfo
 
 struct SDL_GPUGraphicsPipelineCreateInfo
 {
-    SDL_GPUShader* vertex_shader;                   /**< The vertex shader used by the graphics pipeline. */
-    SDL_GPUShader* fragment_shader;                 /**< The fragment shader used by the graphics pipeline. */
-    SDL_GPUVertexInputState vertex_input_state;     /**< The vertex layout of the graphics pipeline. */
-    SDL_GPUPrimitiveType primitive_type;            /**< The primitive topology of the graphics pipeline. */
-    SDL_GPURasterizerState rasterizer_state;        /**< The rasterizer state of the graphics pipeline. */
-    SDL_GPUMultisampleState multisample_state;      /**< The multisample state of the graphics pipeline. */
-    SDL_GPUDepthStencilState depth_stencil_state;   /**< The depth-stencil state of the graphics pipeline. */
+    SDL_GPUShader* vertex_shader;  /**< The vertex shader used by the graphics pipeline. */
+    SDL_GPUShader* fragment_shader;  /**< The fragment shader used by the graphics pipeline. */
+    SDL_GPUVertexInputState vertex_input_state;  /**< The vertex layout of the graphics pipeline. */
+    SDL_GPUPrimitiveType primitive_type;  /**< The primitive topology of the graphics pipeline. */
+    SDL_GPURasterizerState rasterizer_state;  /**< The rasterizer state of the graphics pipeline. */
+    SDL_GPUMultisampleState multisample_state;  /**< The multisample state of the graphics pipeline. */
+    SDL_GPUDepthStencilState depth_stencil_state;  /**< The depth-stencil state of the graphics pipeline. */
     SDL_GPUGraphicsPipelineTargetInfo target_info;  /**< Formats and blend modes for the render targets of the graphics pipeline. */
 
-    SDL_PropertiesID props;                         /**< A properties ID for extensions. Should be 0 if no extensions are needed. */
+    SDL_PropertiesID props;  /**< A properties ID for extensions. Should be 0 if no extensions are needed. */
 }
 
 struct SDL_GPUComputePipelineCreateInfo
 {
-    usz code_size;                          /**< The size in bytes of the compute shader code pointed to. */
-    char* code;                             /**< A pointer to compute shader code. */
-    ZString entrypoint;                     /**< A pointer to a null-terminated UTF-8 string specifying the entry point function name for the shader. */
-    SDL_GPUShaderFormat format;             /**< The format of the compute shader code. */
-    uint num_samplers;                      /**< The number of samplers defined in the shader. */
-    uint num_readonly_storage_textures;     /**< The number of readonly storage textures defined in the shader. */
-    uint num_readonly_storage_buffers;      /**< The number of readonly storage buffers defined in the shader. */
-    uint num_readwrite_storage_textures;    /**< The number of read-write storage textures defined in the shader. */
-    uint num_readwrite_storage_buffers;     /**< The number of read-write storage buffers defined in the shader. */
-    uint num_uniform_buffers;               /**< The number of uniform buffers defined in the shader. */
-    uint threadcount_x;                     /**< The number of threads in the X dimension. This should match the value in the shader. */
-    uint threadcount_y;                     /**< The number of threads in the Y dimension. This should match the value in the shader. */
-    uint threadcount_z;                     /**< The number of threads in the Z dimension. This should match the value in the shader. */
+    usz code_size;  /**< The size in bytes of the compute shader code pointed to. */
+    char* code;  /**< A pointer to compute shader code. */
+    ZString entrypoint;  /**< A pointer to a null-terminated UTF-8 string specifying the entry point function name for the shader. */
+    SDL_GPUShaderFormat format;  /**< The format of the compute shader code. */
+    uint num_samplers;  /**< The number of samplers defined in the shader. */
+    uint num_readonly_storage_textures;  /**< The number of readonly storage textures defined in the shader. */
+    uint num_readonly_storage_buffers;  /**< The number of readonly storage buffers defined in the shader. */
+    uint num_readwrite_storage_textures;  /**< The number of read-write storage textures defined in the shader. */
+    uint num_readwrite_storage_buffers;  /**< The number of read-write storage buffers defined in the shader. */
+    uint num_uniform_buffers;  /**< The number of uniform buffers defined in the shader. */
+    uint threadcount_x;  /**< The number of threads in the X dimension. This should match the value in the shader. */
+    uint threadcount_y;  /**< The number of threads in the Y dimension. This should match the value in the shader. */
+    uint threadcount_z;  /**< The number of threads in the Z dimension. This should match the value in the shader. */
 
-    SDL_PropertiesID props;                 /**< A properties ID for extensions. Should be 0 if no extensions are needed. */
+    SDL_PropertiesID props;  /**< A properties ID for extensions. Should be 0 if no extensions are needed. */
 }
 
 struct SDL_GPUColorTargetInfo
 {
-    SDL_GPUTexture* texture;         /**< The texture that will be used as a color target by a render pass. */
-    uint mip_level;                  /**< The mip level to use as a color target. */
-    uint layer_or_depth_plane;       /**< The layer index or depth plane to use as a color target. This value is treated as a layer index on 2D array and cube textures, and as a depth plane on 3D textures. */
-    SDL_FColor clear_color;          /**< The color to clear the color target to at the start of the render pass. Ignored if SDL_GPU_LOADOP_CLEAR is not used. */
-    SDL_GPULoadOp load_op;           /**< What is done with the contents of the color target at the beginning of the render pass. */
-    SDL_GPUStoreOp store_op;         /**< What is done with the results of the render pass. */
-    SDL_GPUTexture* resolve_texture; /**< The texture that will receive the results of a multisample resolve operation. Ignored if a RESOLVE* store_op is not used. */
-    uint resolve_mip_level;          /**< The mip level of the resolve texture to use for the resolve operation. Ignored if a RESOLVE* store_op is not used. */
-    uint resolve_layer;              /**< The layer index of the resolve texture to use for the resolve operation. Ignored if a RESOLVE* store_op is not used. */
-    bool cycle;                      /**< true cycles the texture if the texture is bound and load_op is not LOAD */
-    bool cycle_resolve_texture;      /**< true cycles the resolve texture if the resolve texture is bound. Ignored if a RESOLVE* store_op is not used. */
+    SDL_GPUTexture* texture;  /**< The texture that will be used as a color target by a render pass. */
+    uint mip_level;  /**< The mip level to use as a color target. */
+    uint layer_or_depth_plane;  /**< The layer index or depth plane to use as a color target. This value is treated as a layer index on 2D array and cube textures, and as a depth plane on 3D textures. */
+    SDL_FColor clear_color;  /**< The color to clear the color target to at the start of the render pass. Ignored if SDL_GPU_LOADOP_CLEAR is not used. */
+    SDL_GPULoadOp load_op;  /**< What is done with the contents of the color target at the beginning of the render pass. */
+    SDL_GPUStoreOp store_op;  /**< What is done with the results of the render pass. */
+    SDL_GPUTexture* resolve_texture;  /**< The texture that will receive the results of a multisample resolve operation. Ignored if a RESOLVE* store_op is not used. */
+    uint resolve_mip_level;  /**< The mip level of the resolve texture to use for the resolve operation. Ignored if a RESOLVE* store_op is not used. */
+    uint resolve_layer;  /**< The layer index of the resolve texture to use for the resolve operation. Ignored if a RESOLVE* store_op is not used. */
+    bool cycle;  /**< true cycles the texture if the texture is bound and load_op is not LOAD */
+    bool cycle_resolve_texture;  /**< true cycles the resolve texture if the resolve texture is bound. Ignored if a RESOLVE* store_op is not used. */
     char padding1;
     char padding2;
 }
 
 struct SDL_GPUDepthStencilTargetInfo
 {
-    SDL_GPUTexture* texture;               /**< The texture that will be used as the depth stencil target by the render pass. */
-    float clear_depth;                     /**< The value to clear the depth component to at the beginning of the render pass. Ignored if SDL_GPU_LOADOP_CLEAR is not used. */
-    SDL_GPULoadOp load_op;                 /**< What is done with the depth contents at the beginning of the render pass. */
-    SDL_GPUStoreOp store_op;               /**< What is done with the depth results of the render pass. */
-    SDL_GPULoadOp stencil_load_op;         /**< What is done with the stencil contents at the beginning of the render pass. */
-    SDL_GPUStoreOp stencil_store_op;       /**< What is done with the stencil results of the render pass. */
-    bool cycle;                            /**< true cycles the texture if the texture is bound and any load ops are not LOAD */
-    char clear_stencil;                    /**< The value to clear the stencil component to at the beginning of the render pass. Ignored if SDL_GPU_LOADOP_CLEAR is not used. */
-    char mip_level;                        /**< The mip level to use as the depth stencil target. */
-    char layer;                            /**< The layer index to use as the depth stencil target. */
+    SDL_GPUTexture* texture;  /**< The texture that will be used as the depth stencil target by the render pass. */
+    float clear_depth;  /**< The value to clear the depth component to at the beginning of the render pass. Ignored if SDL_GPU_LOADOP_CLEAR is not used. */
+    SDL_GPULoadOp load_op;  /**< What is done with the depth contents at the beginning of the render pass. */
+    SDL_GPUStoreOp store_op;  /**< What is done with the depth results of the render pass. */
+    SDL_GPULoadOp stencil_load_op;  /**< What is done with the stencil contents at the beginning of the render pass. */
+    SDL_GPUStoreOp stencil_store_op;  /**< What is done with the stencil results of the render pass. */
+    bool cycle;  /**< true cycles the texture if the texture is bound and any load ops are not LOAD */
+    char clear_stencil;  /**< The value to clear the stencil component to at the beginning of the render pass. Ignored if SDL_GPU_LOADOP_CLEAR is not used. */
+    char mip_level;  /**< The mip level to use as the depth stencil target. */
+    char layer;  /**< The layer index to use as the depth stencil target. */
 }
 
 struct SDL_GPUBlitInfo
 {
-    SDL_GPUBlitRegion source;       /**< The source region for the blit. */
+    SDL_GPUBlitRegion source;  /**< The source region for the blit. */
     SDL_GPUBlitRegion destination;  /**< The destination region for the blit. */
-    SDL_GPULoadOp load_op;          /**< What is done with the contents of the destination before the blit. */
-    SDL_FColor clear_color;         /**< The color to clear the destination region to before the blit. Ignored if load_op is not SDL_GPU_LOADOP_CLEAR. */
-    SDL_FlipMode flip_mode;         /**< The flip mode for the source region. */
-    SDL_GPUFilter filter;           /**< The filter mode used when blitting. */
-    bool cycle;                     /**< true cycles the destination texture if it is already bound. */
+    SDL_GPULoadOp load_op;  /**< What is done with the contents of the destination before the blit. */
+    SDL_FColor clear_color;  /**< The color to clear the destination region to before the blit. Ignored if load_op is not SDL_GPU_LOADOP_CLEAR. */
+    SDL_FlipMode flip_mode;  /**< The flip mode for the source region. */
+    SDL_GPUFilter filter;  /**< The filter mode used when blitting. */
+    bool cycle;  /**< true cycles the destination texture if it is already bound. */
     char padding1;
     char padding2;
     char padding3;
@@ -787,7 +787,7 @@ struct SDL_GPUBlitInfo
 struct SDL_GPUBufferBinding
 {
     SDL_GPUBuffer* buffer;  /**< The buffer to bind. Must have been created with SDL_GPU_BUFFERUSAGE_VERTEX for SDL_BindGPUVertexBuffers, or SDL_GPU_BUFFERUSAGE_INDEX for SDL_BindGPUIndexBuffer. */
-    uint offset;            /**< The starting byte of the data to bind in the buffer. */
+    uint offset;  /**< The starting byte of the data to bind in the buffer. */
 }
 
 struct SDL_GPUTextureSamplerBinding
@@ -799,7 +799,7 @@ struct SDL_GPUTextureSamplerBinding
 struct SDL_GPUStorageBufferReadWriteBinding
 {
     SDL_GPUBuffer* buffer;  /**< The buffer to bind. Must have been created with SDL_GPU_BUFFERUSAGE_COMPUTE_STORAGE_WRITE. */
-    bool cycle;             /**< true cycles the buffer if it is already bound. */
+    bool cycle;  /**< true cycles the buffer if it is already bound. */
     char padding1;
     char padding2;
     char padding3;
@@ -808,9 +808,9 @@ struct SDL_GPUStorageBufferReadWriteBinding
 struct SDL_GPUStorageTextureReadWriteBinding
 {
     SDL_GPUTexture* texture;  /**< The texture to bind. Must have been created with SDL_GPU_TEXTUREUSAGE_COMPUTE_STORAGE_WRITE or SDL_GPU_TEXTUREUSAGE_COMPUTE_STORAGE_SIMULTANEOUS_READ_WRITE. */
-    uint mip_level;           /**< The mip level index to bind. */
-    uint layer;               /**< The layer index to bind. */
-    bool cycle;               /**< true cycles the texture if it is already bound. */
+    uint mip_level;  /**< The mip level index to bind. */
+    uint layer;  /**< The layer index to bind. */
+    bool cycle;  /**< true cycles the texture if it is already bound. */
     char padding1;
     char padding2;
     char padding3;
