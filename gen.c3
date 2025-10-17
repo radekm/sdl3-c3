@@ -1085,12 +1085,20 @@ fn void? generate(String input_file)
             io::printfn("}");
             i++;
         }
-        else if (line.starts_with("typedef struct ") && !line.ends_with(";"))
+        else if ((line.starts_with("typedef struct ") || line.starts_with("typedef union ")) && !line.ends_with(";"))
         {
-            String struct_name = line[15 ..];
-            io::printfn("struct %s", struct_name);
+            if (line.starts_with("typedef struct "))
+            {
+                String struct_name = line[15 ..];
+                io::printfn("struct %s", struct_name);
+            }
+            else
+            {
+                String union_name = line[14 ..];
+                io::printfn("union %s", union_name);
+            }
             line = lines[++i];
-            if (line != "{") abort("Expected { which opens struct, got: '%s'", line);
+            if (line != "{") abort("Expected { which opens struct or union, got: '%s'", line);
             io::printfn("{");
 
             // Read struct or union fields.

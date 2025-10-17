@@ -644,62 +644,62 @@ struct SDL_UserEvent
 }
 
 
-::LINE:: typedef union SDL_Event
-::LINE:: {
-::LINE::     Uint32 type;                            /**< Event type, shared with all events, Uint32 to cover user events which are not in the SDL_EventType enumeration */
-::LINE::     SDL_CommonEvent common;                 /**< Common event data */
-::LINE::     SDL_DisplayEvent display;               /**< Display event data */
-::LINE::     SDL_WindowEvent window;                 /**< Window event data */
-::LINE::     SDL_KeyboardDeviceEvent kdevice;        /**< Keyboard device change event data */
-::LINE::     SDL_KeyboardEvent key;                  /**< Keyboard event data */
-::LINE::     SDL_TextEditingEvent edit;              /**< Text editing event data */
-::LINE::     SDL_TextEditingCandidatesEvent edit_candidates; /**< Text editing candidates event data */
-::LINE::     SDL_TextInputEvent text;                /**< Text input event data */
-::LINE::     SDL_MouseDeviceEvent mdevice;           /**< Mouse device change event data */
-::LINE::     SDL_MouseMotionEvent motion;            /**< Mouse motion event data */
-::LINE::     SDL_MouseButtonEvent button;            /**< Mouse button event data */
-::LINE::     SDL_MouseWheelEvent wheel;              /**< Mouse wheel event data */
-::LINE::     SDL_JoyDeviceEvent jdevice;             /**< Joystick device change event data */
-::LINE::     SDL_JoyAxisEvent jaxis;                 /**< Joystick axis event data */
-::LINE::     SDL_JoyBallEvent jball;                 /**< Joystick ball event data */
-::LINE::     SDL_JoyHatEvent jhat;                   /**< Joystick hat event data */
-::LINE::     SDL_JoyButtonEvent jbutton;             /**< Joystick button event data */
-::LINE::     SDL_JoyBatteryEvent jbattery;           /**< Joystick battery event data */
-::LINE::     SDL_GamepadDeviceEvent gdevice;         /**< Gamepad device event data */
-::LINE::     SDL_GamepadAxisEvent gaxis;             /**< Gamepad axis event data */
-::LINE::     SDL_GamepadButtonEvent gbutton;         /**< Gamepad button event data */
-::LINE::     SDL_GamepadTouchpadEvent gtouchpad;     /**< Gamepad touchpad event data */
-::LINE::     SDL_GamepadSensorEvent gsensor;         /**< Gamepad sensor event data */
-::LINE::     SDL_AudioDeviceEvent adevice;           /**< Audio device event data */
-::LINE::     SDL_CameraDeviceEvent cdevice;          /**< Camera device event data */
-::LINE::     SDL_SensorEvent sensor;                 /**< Sensor event data */
-::LINE::     SDL_QuitEvent quit;                     /**< Quit request event data */
-::LINE::     SDL_UserEvent user;                     /**< Custom event data */
-::LINE::     SDL_TouchFingerEvent tfinger;           /**< Touch finger event data */
-::LINE::     SDL_PenProximityEvent pproximity;       /**< Pen proximity event data */
-::LINE::     SDL_PenTouchEvent ptouch;               /**< Pen tip touching event data */
-::LINE::     SDL_PenMotionEvent pmotion;             /**< Pen motion event data */
-::LINE::     SDL_PenButtonEvent pbutton;             /**< Pen button event data */
-::LINE::     SDL_PenAxisEvent paxis;                 /**< Pen axis event data */
-::LINE::     SDL_RenderEvent render;                 /**< Render event data */
-::LINE::     SDL_DropEvent drop;                     /**< Drag and drop event data */
-::LINE::     SDL_ClipboardEvent clipboard;           /**< Clipboard event data */
+union SDL_Event
+{
+    uint type;  /**< Event type, shared with all events, Uint32 to cover user events which are not in the SDL_EventType enumeration */
+    SDL_CommonEvent common;  /**< Common event data */
+    SDL_DisplayEvent display;  /**< Display event data */
+    SDL_WindowEvent window;  /**< Window event data */
+    SDL_KeyboardDeviceEvent kdevice;  /**< Keyboard device change event data */
+    SDL_KeyboardEvent key;  /**< Keyboard event data */
+    SDL_TextEditingEvent edit;  /**< Text editing event data */
+    SDL_TextEditingCandidatesEvent edit_candidates;  /**< Text editing candidates event data */
+    SDL_TextInputEvent text;  /**< Text input event data */
+    SDL_MouseDeviceEvent mdevice;  /**< Mouse device change event data */
+    SDL_MouseMotionEvent motion;  /**< Mouse motion event data */
+    SDL_MouseButtonEvent button;  /**< Mouse button event data */
+    SDL_MouseWheelEvent wheel;  /**< Mouse wheel event data */
+    SDL_JoyDeviceEvent jdevice;  /**< Joystick device change event data */
+    SDL_JoyAxisEvent jaxis;  /**< Joystick axis event data */
+    SDL_JoyBallEvent jball;  /**< Joystick ball event data */
+    SDL_JoyHatEvent jhat;  /**< Joystick hat event data */
+    SDL_JoyButtonEvent jbutton;  /**< Joystick button event data */
+    SDL_JoyBatteryEvent jbattery;  /**< Joystick battery event data */
+    SDL_GamepadDeviceEvent gdevice;  /**< Gamepad device event data */
+    SDL_GamepadAxisEvent gaxis;  /**< Gamepad axis event data */
+    SDL_GamepadButtonEvent gbutton;  /**< Gamepad button event data */
+    SDL_GamepadTouchpadEvent gtouchpad;  /**< Gamepad touchpad event data */
+    SDL_GamepadSensorEvent gsensor;  /**< Gamepad sensor event data */
+    SDL_AudioDeviceEvent adevice;  /**< Audio device event data */
+    SDL_CameraDeviceEvent cdevice;  /**< Camera device event data */
+    SDL_SensorEvent sensor;  /**< Sensor event data */
+    SDL_QuitEvent quit;  /**< Quit request event data */
+    SDL_UserEvent user;  /**< Custom event data */
+    SDL_TouchFingerEvent tfinger;  /**< Touch finger event data */
+    SDL_PenProximityEvent pproximity;  /**< Pen proximity event data */
+    SDL_PenTouchEvent ptouch;  /**< Pen tip touching event data */
+    SDL_PenMotionEvent pmotion;  /**< Pen motion event data */
+    SDL_PenButtonEvent pbutton;  /**< Pen button event data */
+    SDL_PenAxisEvent paxis;  /**< Pen axis event data */
+    SDL_RenderEvent render;  /**< Render event data */
+    SDL_DropEvent drop;  /**< Drag and drop event data */
+    SDL_ClipboardEvent clipboard;  /**< Clipboard event data */
 
-::LINE::     /* This is necessary for ABI compatibility between Visual C++ and GCC.
-::LINE::        Visual C++ will respect the push pack pragma and use 52 bytes (size of
-::LINE::        SDL_TextEditingEvent, the largest structure for 32-bit and 64-bit
-::LINE::        architectures) for this union, and GCC will use the alignment of the
-::LINE::        largest datatype within the union, which is 8 bytes on 64-bit
-::LINE::        architectures.
+    /* This is necessary for ABI compatibility between Visual C++ and GCC.
+       Visual C++ will respect the push pack pragma and use 52 bytes (size of
+       SDL_TextEditingEvent, the largest structure for 32-bit and 64-bit
+       architectures) for this union, and GCC will use the alignment of the
+       largest datatype within the union, which is 8 bytes on 64-bit
+       architectures.
 
-::LINE::        So... we'll add padding to force the size to be the same for both.
+       So... we'll add padding to force the size to be the same for both.
 
-::LINE::        On architectures where pointers are 16 bytes, this needs rounding up to
-::LINE::        the next multiple of 16, 64, and on architectures where pointers are
-::LINE::        even larger the size of SDL_UserEvent will dominate as being 3 pointers.
-::LINE::     */
-::LINE::     Uint8 padding[128];
-::LINE:: } SDL_Event;
+       On architectures where pointers are 16 bytes, this needs rounding up to
+       the next multiple of 16, 64, and on architectures where pointers are
+       even larger the size of SDL_UserEvent will dominate as being 3 pointers.
+    */
+    char[128] padding;
+}
 
 /* Make sure we haven't broken binary compatibility */
 ::LINE:: SDL_COMPILE_TIME_ASSERT(SDL_Event, sizeof(SDL_Event) == sizeof(((SDL_Event *)NULL)->padding));
