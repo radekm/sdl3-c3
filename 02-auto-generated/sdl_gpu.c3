@@ -13,18 +13,31 @@ module sdl;
 
 /* Type Declarations */
 
+typedef SDL_GPUDevice = void;
 
+typedef SDL_GPUBuffer = void;
 
+typedef SDL_GPUTransferBuffer = void;
 
+typedef SDL_GPUTexture = void;
 
+typedef SDL_GPUSampler = void;
 
+typedef SDL_GPUShader = void;
 
+typedef SDL_GPUComputePipeline = void;
 
+typedef SDL_GPUGraphicsPipeline = void;
 
+typedef SDL_GPUCommandBuffer = void;
 
+typedef SDL_GPURenderPass = void;
 
+typedef SDL_GPUComputePass = void;
 
+typedef SDL_GPUCopyPass = void;
 
+typedef SDL_GPUFence = void;
 
 enum SDL_GPUPrimitiveType : const CInt
 {

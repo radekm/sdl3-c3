@@ -960,16 +960,20 @@ fn void? parse_and_translate_typedef(String line, String* translated_type, Strin
 }
 
 // For example `typedef struct SDL_GPUDevice SDL_GPUDevice;`.
-fn bool is_useless_typedef(String line)
+fn void? parse_opaque_type(String line, String* name)
 {
     Parsing p = { .line = line };
     String ident;
     String ident2;
     if (try p.str("typedef struct ") && try p.ident(&ident) && try p.str(" ") && try p.ident(&ident2) && try p.str(";"))
     {
-        return ident == ident2;
+        if (ident == ident2)
+        {
+            *name = ident;
+            return;
+        }
     }
-    return false;
+    return PARSING_FAILED?;
 }
 
 fn void? generate(String input_file)
@@ -988,6 +992,7 @@ fn void? generate(String input_file)
         String hidden_enum_prefix;
         String typedef_translated_type;
         String typedef_name;
+        String opaque_type_name;
         // Single-line comment.
         if (line.starts_with("/*") && line.ends_with("*/"))
         {
@@ -1049,9 +1054,9 @@ fn void? generate(String input_file)
             io::printfn("typedef %s = %s;", typedef_name, typedef_translated_type);
             i++;
         }
-        else if (is_useless_typedef(line))
+        else if (try parse_opaque_type(line, &opaque_type_name))
         {
-            // Skip typedefs which are not necessary in C3.
+            io::printfn("typedef %s = void;", opaque_type_name);
             i++;
         }
         else if (line.starts_with("typedef enum ") && !line.ends_with(";"))

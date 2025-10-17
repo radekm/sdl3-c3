@@ -86,6 +86,7 @@ struct SDL_AudioSpec
 
 ::LINE:: #define SDL_AUDIO_FRAMESIZE(x) (SDL_AUDIO_BYTESIZE((x).format) * (x).channels)
 
+typedef SDL_AudioStream = void;
 
 
 /* Function prototypes */
