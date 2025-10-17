@@ -154,6 +154,9 @@ String[*] hidden_enums = {
 
     // `SDL_init.h`.
     "SDL_InitFlags",
+
+    // `SDL_surface.h`.
+    "SDL_SurfaceFlags",
 };
 
 String[*] hidden_enums_prefixes = {
@@ -179,6 +182,9 @@ String[*] hidden_enums_prefixes = {
 
     // `SDL_init.h`.
     "SDL_INIT_",
+
+    // `SDL_surface.h`.
+    "SDL_SURFACE_",
 };
 
 fn bool is_hidden_enum_with_defines(String line, String* hidden_enum_name, String* hidden_enum_prefix)
@@ -721,8 +727,24 @@ fn EnumLines? parse_enum_items(String[] lines, usz* i)
                                 }, out_value)!;
                                 ch.@variant(fn void?(Parsing* p, String* out_value)
                                 {
-                                    String ident;
                                     p.ident(out_value)!;
+                                }, out_value)!;
+                                // Or of two identifiers.
+                                ch.@variant(fn void?(Parsing* p, String* out_value)
+                                {
+                                    p.str("(")!;
+                                    p.ignore_space();
+                                    usz start_pos = p.pos;
+                                    String ident;
+                                    p.ident(&ident)!;
+                                    p.ignore_space();
+                                    p.str("|")!;
+                                    p.ignore_space();
+                                    p.ident(&ident)!;
+                                    usz end_pos = p.pos;
+                                    p.ignore_space();
+                                    p.str(")")!;
+                                    *out_value = p.line[start_pos:end_pos-start_pos];
                                 }, out_value)!;
                             }!;
                             p.ignore_space();
