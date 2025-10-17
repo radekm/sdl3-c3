@@ -20,9 +20,9 @@ const PROP_GLOBAL_VIDEO_WAYLAND_WL_DISPLAY_POINTER  = "SDL.video.wayland.wl_disp
 
 enum SDL_SystemTheme : const CInt
 {
-    UNKNOWN,   /**< Unknown system theme */
-    LIGHT,     /**< Light colored system theme */
-    DARK       /**< Dark colored system theme */
+    UNKNOWN,  /**< Unknown system theme */
+    LIGHT,  /**< Light colored system theme */
+    DARK,  /**< Dark colored system theme */
 }
 
 
@@ -43,11 +43,11 @@ struct SDL_DisplayMode
 
 enum SDL_DisplayOrientation : const CInt
 {
-    UNKNOWN,            /**< The display orientation can't be determined */
-    LANDSCAPE,          /**< The display is in landscape mode, with the right side up, relative to portrait mode */
+    UNKNOWN,  /**< The display orientation can't be determined */
+    LANDSCAPE,  /**< The display is in landscape mode, with the right side up, relative to portrait mode */
     LANDSCAPE_FLIPPED,  /**< The display is in landscape mode, with the left side up, relative to portrait mode */
-    PORTRAIT,           /**< The display is in portrait mode */
-    PORTRAIT_FLIPPED    /**< The display is in portrait mode, upside down */
+    PORTRAIT,  /**< The display is in portrait mode */
+    PORTRAIT_FLIPPED,  /**< The display is in portrait mode, upside down */
 }
 
 
@@ -101,19 +101,19 @@ enum SDL_WindowFlags : const ulong
 
 enum SDL_FlashOperation : const CInt
 {
-    CANCEL,                   /**< Cancel any window flash state */
-    BRIEFLY,                  /**< Flash the window briefly to get attention */
-    UNTIL_FOCUSED             /**< Flash the window until it gets focus */
+    CANCEL,  /**< Cancel any window flash state */
+    BRIEFLY,  /**< Flash the window briefly to get attention */
+    UNTIL_FOCUSED,  /**< Flash the window until it gets focus */
 }
 
 enum SDL_ProgressState : const CInt
 {
-    INVALID = -1,    /**< An invalid progress state indicating an error; check SDL_GetError() */
-    NONE,            /**< No progress bar is shown */
-    INDETERMINATE,   /**< The progress bar is shown in a indeterminate state */
-    NORMAL,          /**< The progress bar is shown in a normal state */
-    PAUSED,          /**< The progress bar is shown in a paused state */
-    ERROR            /**< The progress bar is shown in a state indicating the application had an error */
+    INVALID = -1,  /**< An invalid progress state indicating an error; check SDL_GetError() */
+    NONE,  /**< No progress bar is shown */
+    INDETERMINATE,  /**< The progress bar is shown in a indeterminate state */
+    NORMAL,  /**< The progress bar is shown in a normal state */
+    PAUSED,  /**< The progress bar is shown in a paused state */
+    ERROR,  /**< The progress bar is shown in a state indicating the application had an error */
 }
 
 ::LINE:: typedef struct SDL_GLContextState *SDL_GLContext;
@@ -134,34 +134,34 @@ typedef SDL_EGLint = CInt;
 
 enum SDL_GLAttr : const CInt
 {
-    RED_SIZE,                    /**< the minimum number of bits for the red channel of the color buffer; defaults to 8. */
-    GREEN_SIZE,                  /**< the minimum number of bits for the green channel of the color buffer; defaults to 8. */
-    BLUE_SIZE,                   /**< the minimum number of bits for the blue channel of the color buffer; defaults to 8. */
-    ALPHA_SIZE,                  /**< the minimum number of bits for the alpha channel of the color buffer; defaults to 8. */
-    BUFFER_SIZE,                 /**< the minimum number of bits for frame buffer size; defaults to 0. */
-    DOUBLEBUFFER,                /**< whether the output is single or double buffered; defaults to double buffering on. */
-    DEPTH_SIZE,                  /**< the minimum number of bits in the depth buffer; defaults to 16. */
-    STENCIL_SIZE,                /**< the minimum number of bits in the stencil buffer; defaults to 0. */
-    ACCUM_RED_SIZE,              /**< the minimum number of bits for the red channel of the accumulation buffer; defaults to 0. */
-    ACCUM_GREEN_SIZE,            /**< the minimum number of bits for the green channel of the accumulation buffer; defaults to 0. */
-    ACCUM_BLUE_SIZE,             /**< the minimum number of bits for the blue channel of the accumulation buffer; defaults to 0. */
-    ACCUM_ALPHA_SIZE,            /**< the minimum number of bits for the alpha channel of the accumulation buffer; defaults to 0. */
-    STEREO,                      /**< whether the output is stereo 3D; defaults to off. */
-    MULTISAMPLEBUFFERS,          /**< the number of buffers used for multisample anti-aliasing; defaults to 0. */
-    MULTISAMPLESAMPLES,          /**< the number of samples used around the current pixel used for multisample anti-aliasing. */
-    ACCELERATED_VISUAL,          /**< set to 1 to require hardware acceleration, set to 0 to force software rendering; defaults to allow either. */
-    RETAINED_BACKING,            /**< not used (deprecated). */
-    CONTEXT_MAJOR_VERSION,       /**< OpenGL context major version. */
-    CONTEXT_MINOR_VERSION,       /**< OpenGL context minor version. */
-    CONTEXT_FLAGS,               /**< some combination of 0 or more of elements of the SDL_GLContextFlag enumeration; defaults to 0. */
-    CONTEXT_PROFILE_MASK,        /**< type of GL context (Core, Compatibility, ES). See SDL_GLProfile; default value depends on platform. */
+    RED_SIZE,  /**< the minimum number of bits for the red channel of the color buffer; defaults to 8. */
+    GREEN_SIZE,  /**< the minimum number of bits for the green channel of the color buffer; defaults to 8. */
+    BLUE_SIZE,  /**< the minimum number of bits for the blue channel of the color buffer; defaults to 8. */
+    ALPHA_SIZE,  /**< the minimum number of bits for the alpha channel of the color buffer; defaults to 8. */
+    BUFFER_SIZE,  /**< the minimum number of bits for frame buffer size; defaults to 0. */
+    DOUBLEBUFFER,  /**< whether the output is single or double buffered; defaults to double buffering on. */
+    DEPTH_SIZE,  /**< the minimum number of bits in the depth buffer; defaults to 16. */
+    STENCIL_SIZE,  /**< the minimum number of bits in the stencil buffer; defaults to 0. */
+    ACCUM_RED_SIZE,  /**< the minimum number of bits for the red channel of the accumulation buffer; defaults to 0. */
+    ACCUM_GREEN_SIZE,  /**< the minimum number of bits for the green channel of the accumulation buffer; defaults to 0. */
+    ACCUM_BLUE_SIZE,  /**< the minimum number of bits for the blue channel of the accumulation buffer; defaults to 0. */
+    ACCUM_ALPHA_SIZE,  /**< the minimum number of bits for the alpha channel of the accumulation buffer; defaults to 0. */
+    STEREO,  /**< whether the output is stereo 3D; defaults to off. */
+    MULTISAMPLEBUFFERS,  /**< the number of buffers used for multisample anti-aliasing; defaults to 0. */
+    MULTISAMPLESAMPLES,  /**< the number of samples used around the current pixel used for multisample anti-aliasing. */
+    ACCELERATED_VISUAL,  /**< set to 1 to require hardware acceleration, set to 0 to force software rendering; defaults to allow either. */
+    RETAINED_BACKING,  /**< not used (deprecated). */
+    CONTEXT_MAJOR_VERSION,  /**< OpenGL context major version. */
+    CONTEXT_MINOR_VERSION,  /**< OpenGL context minor version. */
+    CONTEXT_FLAGS,  /**< some combination of 0 or more of elements of the SDL_GLContextFlag enumeration; defaults to 0. */
+    CONTEXT_PROFILE_MASK,  /**< type of GL context (Core, Compatibility, ES). See SDL_GLProfile; default value depends on platform. */
     SHARE_WITH_CURRENT_CONTEXT,  /**< OpenGL context sharing; defaults to 0. */
-    FRAMEBUFFER_SRGB_CAPABLE,    /**< requests sRGB capable visual; defaults to 0. */
-    CONTEXT_RELEASE_BEHAVIOR,    /**< sets context the release behavior. See SDL_GLContextReleaseFlag; defaults to FLUSH. */
+    FRAMEBUFFER_SRGB_CAPABLE,  /**< requests sRGB capable visual; defaults to 0. */
+    CONTEXT_RELEASE_BEHAVIOR,  /**< sets context the release behavior. See SDL_GLContextReleaseFlag; defaults to FLUSH. */
     CONTEXT_RESET_NOTIFICATION,  /**< set context reset notification. See SDL_GLContextResetNotification; defaults to NO_NOTIFICATION. */
     CONTEXT_NO_ERROR,
     FLOATBUFFERS,
-    EGL_PLATFORM
+    EGL_PLATFORM,
 }
 
 enum SDL_GLProfile : const uint
@@ -449,16 +449,16 @@ extern fn bool show_window_system_menu(SDL_Window* window, CInt x, CInt y) @exte
 
 enum SDL_HitTestResult : const CInt
 {
-    NORMAL,             /**< Region is normal. No special properties. */
-    DRAGGABLE,          /**< Region can drag entire window. */
-    RESIZE_TOPLEFT,     /**< Region is the resizable top-left corner border. */
-    RESIZE_TOP,         /**< Region is the resizable top border. */
-    RESIZE_TOPRIGHT,    /**< Region is the resizable top-right corner border. */
-    RESIZE_RIGHT,       /**< Region is the resizable right border. */
-    RESIZE_BOTTOMRIGHT, /**< Region is the resizable bottom-right corner border. */
-    RESIZE_BOTTOM,      /**< Region is the resizable bottom border. */
+    NORMAL,  /**< Region is normal. No special properties. */
+    DRAGGABLE,  /**< Region can drag entire window. */
+    RESIZE_TOPLEFT,  /**< Region is the resizable top-left corner border. */
+    RESIZE_TOP,  /**< Region is the resizable top border. */
+    RESIZE_TOPRIGHT,  /**< Region is the resizable top-right corner border. */
+    RESIZE_RIGHT,  /**< Region is the resizable right border. */
+    RESIZE_BOTTOMRIGHT,  /**< Region is the resizable bottom-right corner border. */
+    RESIZE_BOTTOM,  /**< Region is the resizable bottom border. */
     RESIZE_BOTTOMLEFT,  /**< Region is the resizable bottom-left corner border. */
-    RESIZE_LEFT         /**< Region is the resizable left border. */
+    RESIZE_LEFT,  /**< Region is the resizable left border. */
 }
 
 ::LINE:: typedef SDL_HitTestResult (SDLCALL *SDL_HitTest)(SDL_Window *win,

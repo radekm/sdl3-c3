@@ -88,33 +88,47 @@ fn usz skip_comments_and_empty_lines(String[] lines, usz current_line)
     return current_line;
 }
 
-fn usz longest_prefix_of_enum_items(String[] names)
+fn usz longest_prefix_of_enum_items(EnumLines* enum_lines)
 {
-    if (names.len >= 2)
+    String first_name;
+    usz len;
+    foreach (i, kind : enum_lines.kinds)
     {
-        String first_name = names[0];
-        usz len = first_name.len;
-        for (usz i = 1; i < names.len; i++)
+        // We're only interested in enum items.
+        if (kind != ITEM) continue;
+
+        EnumItemLine item = enum_lines.lines[i].item;
+        if (first_name == "")
         {
-            String name = names[i];
-            len = min(len, name.len);
+            first_name = item.name;
+            len = first_name.len;
+        }
+        else
+        {
+            len = min(len, item.name.len);
             for (usz j; j < len; j++)
             {
-                if (name[j] != first_name[j])
+                if (item.name[j] != first_name[j])
                 {
                     len = j;
                     break;
                 }
             }
         }
-        return len;
     }
-    else if (names.len == 1)
+    
+    // No items.
+    if (first_name == "")
     {
-        String first_name = names[0];
-        if (first_name.starts_with("SDL_")) return 4;
+        return 0;
     }
-    return 0;
+    // Only one item.
+    else if (len == first_name.len)
+    {
+        return first_name.starts_with("SDL_") ? 4 : 0;
+    }
+    // At least two items.
+    return len;
 }
 
 String[*] hidden_enums = {
@@ -223,6 +237,12 @@ fn void Parsing.space(&self, String* out)
     self.pos = pos;
 }
 
+fn void Parsing.ignore_space(&self)
+{
+    String space;
+    self.space(&space);
+}
+
 // At least one space.
 fn void? Parsing.space1(&self, String* out)
 {
@@ -230,6 +250,12 @@ fn void? Parsing.space1(&self, String* out)
     self.space(&result);
     if (result.len == 0) return PARSING_FAILED?;
     *out = result;
+}
+
+fn void? Parsing.ignore_space1(&self)
+{
+    String space;
+    self.space1(&space)!;
 }
 
 // Ident is never empty.
@@ -262,7 +288,11 @@ fn void? Parsing.integer(&self, String* out)
     usz start_pos = self.pos;
     usz pos = start_pos;
 
-    if (self.line[start_pos..].starts_with("0x"))
+    if (self.line[pos..].starts_with("-"))
+    {
+        pos += 1;
+    }
+    if (self.line[pos..].starts_with("0x"))
     {
         // Read hexadecimal number.
         pos += 2;
@@ -308,7 +338,7 @@ fn void Parsing.rest(&self, String* out)
 }
 
 // Stops when either `delimiter` or end of string is reached.
-fn void? Parsing.rest_until(&self, char delimiter, String* out)
+fn void Parsing.rest_until_char(&self, char delimiter, String* out)
 {
     usz start_pos = self.pos;
     usz pos = start_pos;
@@ -321,6 +351,27 @@ fn void? Parsing.rest_until(&self, char delimiter, String* out)
     // `self.line[pos]` is not part of `out`.
     *out = self.line[start_pos:pos-start_pos];
     self.pos = pos;
+}
+
+// Stops when either `delimiter` or end of string is reached.
+fn void Parsing.rest_until_str(&self, String delimiter, String* out)
+{
+    usz start_pos = self.pos;
+    usz pos = start_pos;
+    while (pos < self.line.len)
+    {
+        if (self.line[pos..].starts_with(delimiter)) break;
+        pos++;
+    }
+
+    // `self.line[pos]` is not part of `out`.
+    *out = self.line[start_pos:pos-start_pos];
+    self.pos = pos;
+}
+
+fn void? Parsing.ensure_eol(&self)
+{
+    if (self.pos < self.line.len) return PARSING_FAILED?;
 }
 
 struct Chooser
@@ -359,6 +410,27 @@ macro void? Chooser.@variant(&self, #parse, ...)
     }
 }
 
+macro bool? Parsing.@optional(&self, #parse, ...)
+{
+    Parsing orig = *self;
+    if (catch excuse = #parse(self, $vasplat))
+    {
+        if (excuse == PARSING_FAILED)
+        {
+            *self = orig;
+            return false;
+        }
+        else
+        {
+            return excuse?;
+        }
+    }
+    else
+    {
+        return true;
+    }
+}
+
 fn void? parse_integer_define(String line, String* ident, String* space, String* value, String* rest)
 {
     Parsing p = { .line = line };
@@ -372,7 +444,7 @@ fn void? parse_integer_define(String line, String* ident, String* space, String*
     }
     else if (try p.str("("))
     {
-        p.rest_until(')', value)!;
+        p.rest_until_char(')', value);
         p.str(")")!;
     }
     else
@@ -544,6 +616,191 @@ fn void? Parsing.parse_and_translate_type(&self, String* translated)
     }!;
 }
 
+struct UnparsableLine
+{
+    String line;
+}
+
+// chci whitespace or comment
+struct VerbatimLine
+{
+    String line;
+}
+
+struct EnumItemLine
+{
+    String name;
+    String value;  // Empty if no value.
+    // This comment may not be closed.
+    // So it may continue on `VERBATIM` lines after the item.
+    String comment_starting_after_item;
+}
+
+enum EnumLineKind
+{
+    UNPARSABLE,
+    VERBATIM,
+    ITEM,
+}
+
+union EnumLine
+{
+    UnparsableLine unparsable;
+    VerbatimLine verbatim;
+    EnumItemLine item;
+}
+
+struct EnumLines
+{
+    EnumLineKind[] kinds;
+    EnumLine[] lines;
+}
+
+enum EnumParserMode
+{
+    NORMAL,
+    IN_COMMENT,
+    IN_IF,
+}
+
+<*
+ @param [&inout] i
+*>
+fn EnumLines? parse_enum_items(String[] lines, usz* i)
+{
+    List{EnumLineKind} enum_line_kinds;
+    enum_line_kinds.tinit();
+    List{EnumLine} enum_lines;
+    enum_lines.tinit();
+    EnumParserMode mode;
+    while PROCESS_LINE: (true)
+    {
+        Parsing p = { .line = lines[*i] };
+
+        switch (mode)
+        {
+            case NORMAL:
+                // End of enum (only in normal mode).
+                if (p.line.starts_with("}")) break PROCESS_LINE;
+
+                bool comment_starts;
+                bool if_starts;
+                p.@choose(; ch)
+                {
+                    // Line with enum item.
+                    ch.@variant(fn void?(Parsing* p, List{EnumLineKind}* enum_line_kinds, List{EnumLine}* enum_lines, bool *out_comment_starts)
+                    {
+                        String name;
+                        p.ignore_space();
+                        p.ident(&name)!;
+                        p.ignore_space();
+
+                        String value;
+                        p.@optional(fn void?(Parsing* p, String* out_value)
+                        {
+                            usz start_pos = p.pos;
+                            p.str("=")!;
+                            p.ignore_space();
+                            p.@choose(; ch)
+                            {
+                                ch.@variant(fn void?(Parsing* p, String* out_value)
+                                {
+                                    p.integer(out_value)!;
+                                }, out_value)!;
+                                ch.@variant(fn void?(Parsing* p, String* out_value)
+                                {
+                                    String ident;
+                                    p.ident(out_value)!;
+                                }, out_value)!;
+                            }!;
+                            p.ignore_space();
+                        }, &value)!;
+
+                        // Read optional comma.
+                        p.@optional(fn void?(Parsing* p)
+                        {
+                            p.str(",")!;
+                            p.ignore_space();
+                        })!;
+
+
+                        String comment;
+                        bool comment_ends;
+                        p.@optional(fn void?(Parsing* p, String* out_comment, bool* out_comment_starts)
+                        {
+                            usz start_pos = p.pos;
+                            String rest;
+                            p.str("/*")!;
+                            p.rest_until_str("*/", &rest);
+                            *out_comment_starts = !@ok(p.str("*/"));
+                            *out_comment = p.line[start_pos:p.pos-start_pos];
+                        }, &comment, out_comment_starts)!;
+
+                        p.ignore_space();
+                        p.ensure_eol()!;
+
+                        enum_line_kinds.push(ITEM);
+                        enum_lines.push({ .item = { .name = name, .value = value, .comment_starting_after_item = comment } });
+
+                    }, &enum_line_kinds, &enum_lines, &comment_starts)!;
+                    // Line with comment or empty line.
+                    ch.@variant(fn void?(Parsing* p, List{EnumLineKind}* enum_line_kinds, List{EnumLine}* enum_lines, bool *out_comment_starts)
+                    {
+                        // We don't write to `out_comment_starts` until the whole line has been successfully parsed.
+                        bool comment_starts;
+                        p.ignore_space();
+                        p.@optional(fn void?(Parsing* p, bool* out_comment_starts)
+                        {
+                            String rest;
+                            p.str("/*")!;
+                            p.rest_until_str("*/", &rest);
+                            *out_comment_starts = !@ok(p.str("*/"));
+                        }, &comment_starts)!;
+
+                        p.ensure_eol()!;
+
+                        *out_comment_starts = comment_starts;
+                        enum_line_kinds.push(VERBATIM);
+                        enum_lines.push({ .verbatim = { .line = p.line } });
+
+                    }, &enum_line_kinds, &enum_lines, &comment_starts)!;
+                    // Line with `#if`.
+                    ch.@variant(fn void?(Parsing* p, List{EnumLineKind}* enum_line_kinds, List{EnumLine}* enum_lines, bool *out_if_starts)
+                    {
+                        p.ignore_space();
+                        p.str("#if")!;
+                        p.ignore_space1()!;
+
+                        *out_if_starts = true;
+                        enum_line_kinds.push(UNPARSABLE);
+                        enum_lines.push({ .unparsable = { .line = p.line } });
+
+                    }, &enum_line_kinds, &enum_lines, &if_starts)!;
+                }!;
+                if (comment_starts) mode = IN_COMMENT;
+                if (if_starts) mode = IN_IF;
+            case IN_COMMENT:
+                String rest;
+                p.rest_until_str("*/", &rest);
+                if(@ok(p.str("*/"))) mode = NORMAL;
+                p.ensure_eol()!;
+
+                enum_line_kinds.push(VERBATIM);
+                enum_lines.push({ .verbatim = { .line = p.line } });
+            case IN_IF:
+                String rest;
+                p.rest_until_str("#endif", &rest);
+                if(@ok(p.str("#endif"))) mode = NORMAL;
+
+                enum_line_kinds.push(UNPARSABLE);
+                enum_lines.push({ .unparsable = { .line = p.line } });
+        }
+        (*i)++;
+    }
+    EnumLines result = { .kinds = enum_line_kinds.array_view(), .lines = enum_lines.array_view() };
+    return result;
+}
+
 fn void? parse_and_translate_typedef(String line, String* translated_type, String* name)
 {
     Parsing p = { .line = line };
@@ -659,83 +916,37 @@ fn void? generate(String input_file)
             io::printfn("{");
 
             // Read enum items.
-            line = lines[++i];
-            List{String[]} lines_above_items;  // Lines above items usually with comments or empty.
-            lines_above_items.tinit(128);
-            List{String} names;
-            names.tinit(128);
-            List{String} rests;
-            rests.tinit(128);
-            List{String[]} lines_below_items;  // Lines below items where comments from `rests` continue.
-            lines_below_items.tinit(128);
-            while (!line.starts_with("}"))
+            i++;
+            EnumLines? enum_lines = parse_enum_items(lines, &i);
+            if (catch excuse = enum_lines)
             {
-                // Save lines with comments or empty lines.
-                usz first_line = i;
-                while (true)
-                {
-                    // Empty line.
-                    if (lines[i] == "")
-                    {
-                        i++;
-                    }
-                    // Single-line comment.
-                    else if (lines[i].starts_with("    /*") && lines[i].ends_with("*/"))
-                    {
-                        i++;
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-                lines_above_items.push(lines[first_line:i-first_line]);
-                line = lines[i];
-
-                if (!line.starts_with("    ")) abort("Expected four spaces before each enum item, got: '%s'", line);
-                // We assume that that are exactly four spaces at the beginning (not more).
-                usz name_start = 4;
-                usz name_len = line[name_start..].index_of_chars({' ', ','}) ?? line.len - name_start;
-                String name = line[name_start:name_len];
-                String rest = line[name_start+name_len..];
-                names.push(name);
-                rests.push(rest);
-                // Comment starts in `rest` but doesn't end on current line.
-                // We have to read lines below.
-                first_line = i + 1;
-                String[] lines_below_item;
-                if (rest.contains("/*") && !rest.ends_with("*/"))
-                {
-                    while (!lines[++i].ends_with("*/")) {}
-                }
-                // Save empty lines after the item.
-                while (lines[++i] == "") {}
-                lines_below_item = lines[first_line:i-first_line];
-                lines_below_items.push(lines_below_item);
-                line = lines[i];
+                abort("Parsing enum items failed on line %d: '%s'", i, lines[i]);
             }
 
             // Drop the longest common prefix of item names.
-            usz common_prefix = longest_prefix_of_enum_items(names.array_view());
-            foreach (j, name : names)
+            usz common_prefix = longest_prefix_of_enum_items(&enum_lines);
+            foreach (j, kind : enum_lines.kinds)
             {
-                String[] lines_above_item = lines_above_items[j];
-                String[] lines_below_item = lines_below_items[j];
-                String rest = rests[j];
-                foreach (l : lines_above_item)
+                EnumLine enum_line = enum_lines.lines[j];
+                switch (kind)
                 {
-                    io::printfn("%s", l);
-                }
-                io::printfn("    %s%s", name[common_prefix..], rest);
-                foreach (l : lines_below_item)
-                {
-                    // We drop `common_prefix` chars from non-empty lines hoping that these are spaces.
-                    // We're doing this to preserve indent.
-                    if (l != "") l = l[common_prefix..];
-                    io::printfn("%s", l);
+                    case UNPARSABLE:
+                        // Line which couldn't be translated.
+                        io::printfn("::LINE:: %s", enum_line.unparsable.line);
+                    case VERBATIM:
+                        io::printfn("%s", enum_line.verbatim.line);
+                    case ITEM:
+                        EnumItemLine item = enum_line.item;
+                        io::printf("    %s", item.name[common_prefix..]);
+                        if (item.value != "") io::printf(" = %s", item.value);
+                        io::printf(",");
+                        if (item.comment_starting_after_item != "") io::printf("  %s", item.comment_starting_after_item);
+                        io::printfn("");
                 }
             }
 
+            line = lines[i];
+            if (!line.starts_with("}")) abort("Expected } which closes enum, got: '%s'", line);
             io::printfn("}");
             i++;
         }
@@ -782,7 +993,7 @@ fn void? generate(String input_file)
                 if (try p.str("["))
                 {
                     String array_size;
-                    p.rest_until(']', &array_size)!;
+                    p.rest_until_char(']', &array_size);
                     p.str("]")!;
                     name = line[pos:p.pos-pos];
                 }

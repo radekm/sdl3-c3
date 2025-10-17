@@ -29,31 +29,31 @@ module sdl;
 enum SDL_GPUPrimitiveType : const CInt
 {
     TRIANGLELIST,  /**< A series of separate triangles. */
-    TRIANGLESTRIP, /**< A series of connected triangles. */
-    LINELIST,      /**< A series of separate lines. */
-    LINESTRIP,     /**< A series of connected lines. */
-    POINTLIST      /**< A series of separate points. */
+    TRIANGLESTRIP,  /**< A series of connected triangles. */
+    LINELIST,  /**< A series of separate lines. */
+    LINESTRIP,  /**< A series of connected lines. */
+    POINTLIST,  /**< A series of separate points. */
 }
 
 enum SDL_GPULoadOp : const CInt
 {
-    LOAD,      /**< The previous contents of the texture will be preserved. */
-    CLEAR,     /**< The contents of the texture will be cleared to a color. */
-    DONT_CARE  /**< The previous contents of the texture need not be preserved. The contents will be undefined. */
+    LOAD,  /**< The previous contents of the texture will be preserved. */
+    CLEAR,  /**< The contents of the texture will be cleared to a color. */
+    DONT_CARE,  /**< The previous contents of the texture need not be preserved. The contents will be undefined. */
 }
 
 enum SDL_GPUStoreOp : const CInt
 {
-    STORE,             /**< The contents generated during the render pass will be written to memory. */
-    DONT_CARE,         /**< The contents generated during the render pass are not needed and may be discarded. The contents will be undefined. */
-    RESOLVE,           /**< The multisample contents generated during the render pass will be resolved to a non-multisample texture. The contents in the multisample texture may then be discarded and will be undefined. */
-    RESOLVE_AND_STORE  /**< The multisample contents generated during the render pass will be resolved to a non-multisample texture. The contents in the multisample texture will be written to memory. */
+    STORE,  /**< The contents generated during the render pass will be written to memory. */
+    DONT_CARE,  /**< The contents generated during the render pass are not needed and may be discarded. The contents will be undefined. */
+    RESOLVE,  /**< The multisample contents generated during the render pass will be resolved to a non-multisample texture. The contents in the multisample texture may then be discarded and will be undefined. */
+    RESOLVE_AND_STORE,  /**< The multisample contents generated during the render pass will be resolved to a non-multisample texture. The contents in the multisample texture will be written to memory. */
 }
 
 enum SDL_GPUIndexElementSize : const CInt
 {
-    16BIT, /**< The index elements are 16-bit. */
-    32BIT  /**< The index elements are 32-bit. */
+    16BIT,  /**< The index elements are 16-bit. */
+    32BIT,  /**< The index elements are 32-bit. */
 }
 
 enum SDL_GPUTextureFormat : const CInt
@@ -178,7 +178,7 @@ enum SDL_GPUTextureFormat : const CInt
     ASTC_10x8_FLOAT,
     ASTC_10x10_FLOAT,
     ASTC_12x10_FLOAT,
-    ASTC_12x12_FLOAT
+    ASTC_12x12_FLOAT,
 }
 
 enum SDL_GPUTextureUsageFlags : const uint
@@ -194,11 +194,11 @@ enum SDL_GPUTextureUsageFlags : const uint
 
 enum SDL_GPUTextureType : const CInt
 {
-    2D,         /**< The texture is a 2-dimensional image. */
-    2D_ARRAY,   /**< The texture is a 2-dimensional array image. */
-    3D,         /**< The texture is a 3-dimensional image. */
-    CUBE,       /**< The texture is a cube image. */
-    CUBE_ARRAY  /**< The texture is a cube array image. */
+    2D,  /**< The texture is a 2-dimensional image. */
+    2D_ARRAY,  /**< The texture is a 2-dimensional array image. */
+    3D,  /**< The texture is a 3-dimensional image. */
+    CUBE,  /**< The texture is a cube image. */
+    CUBE_ARRAY,  /**< The texture is a cube array image. */
 }
 
 enum SDL_GPUSampleCount : const CInt
@@ -206,7 +206,7 @@ enum SDL_GPUSampleCount : const CInt
     1,  /**< No multisampling. */
     2,  /**< MSAA 2x */
     4,  /**< MSAA 4x */
-    8   /**< MSAA 8x */
+    8,  /**< MSAA 8x */
 }
 
 
@@ -217,7 +217,7 @@ enum SDL_GPUCubeMapFace : const CInt
     POSITIVEY,
     NEGATIVEY,
     POSITIVEZ,
-    NEGATIVEZ
+    NEGATIVEZ,
 }
 
 enum SDL_GPUBufferUsageFlags : const uint
@@ -233,13 +233,13 @@ enum SDL_GPUBufferUsageFlags : const uint
 enum SDL_GPUTransferBufferUsage : const CInt
 {
     UPLOAD,
-    DOWNLOAD
+    DOWNLOAD,
 }
 
 enum SDL_GPUShaderStage : const CInt
 {
     VERTEX,
-    FRAGMENT
+    FRAGMENT,
 }
 
 enum SDL_GPUShaderFormat : const uint
@@ -309,86 +309,86 @@ enum SDL_GPUVertexElementFormat : const CInt
 
     /* 16-bit Floats */
     HALF2,
-    HALF4
+    HALF4,
 }
 
 enum SDL_GPUVertexInputRate : const CInt
 {
-    VERTEX,   /**< Attribute addressing is a function of the vertex index. */
-    INSTANCE  /**< Attribute addressing is a function of the instance index. */
+    VERTEX,  /**< Attribute addressing is a function of the vertex index. */
+    INSTANCE,  /**< Attribute addressing is a function of the instance index. */
 }
 
 enum SDL_GPUFillMode : const CInt
 {
     FILL,  /**< Polygons will be rendered via rasterization. */
-    LINE   /**< Polygon edges will be drawn as line segments. */
+    LINE,  /**< Polygon edges will be drawn as line segments. */
 }
 
 enum SDL_GPUCullMode : const CInt
 {
-    NONE,   /**< No triangles are culled. */
+    NONE,  /**< No triangles are culled. */
     FRONT,  /**< Front-facing triangles are culled. */
-    BACK    /**< Back-facing triangles are culled. */
+    BACK,  /**< Back-facing triangles are culled. */
 }
 
 enum SDL_GPUFrontFace : const CInt
 {
     OUNTER_CLOCKWISE,  /**< A triangle with counter-clockwise vertex winding will be considered front-facing. */
-    LOCKWISE           /**< A triangle with clockwise vertex winding will be considered front-facing. */
+    LOCKWISE,  /**< A triangle with clockwise vertex winding will be considered front-facing. */
 }
 
 enum SDL_GPUCompareOp : const CInt
 {
     INVALID,
-    NEVER,             /**< The comparison always evaluates false. */
-    LESS,              /**< The comparison evaluates reference < test. */
-    EQUAL,             /**< The comparison evaluates reference == test. */
-    LESS_OR_EQUAL,     /**< The comparison evaluates reference <= test. */
-    GREATER,           /**< The comparison evaluates reference > test. */
-    NOT_EQUAL,         /**< The comparison evaluates reference != test. */
+    NEVER,  /**< The comparison always evaluates false. */
+    LESS,  /**< The comparison evaluates reference < test. */
+    EQUAL,  /**< The comparison evaluates reference == test. */
+    LESS_OR_EQUAL,  /**< The comparison evaluates reference <= test. */
+    GREATER,  /**< The comparison evaluates reference > test. */
+    NOT_EQUAL,  /**< The comparison evaluates reference != test. */
     GREATER_OR_EQUAL,  /**< The comparison evaluates reference >= test. */
-    ALWAYS             /**< The comparison always evaluates true. */
+    ALWAYS,  /**< The comparison always evaluates true. */
 }
 
 enum SDL_GPUStencilOp : const CInt
 {
     INVALID,
-    KEEP,                 /**< Keeps the current value. */
-    ZERO,                 /**< Sets the value to 0. */
-    REPLACE,              /**< Sets the value to reference. */
+    KEEP,  /**< Keeps the current value. */
+    ZERO,  /**< Sets the value to 0. */
+    REPLACE,  /**< Sets the value to reference. */
     INCREMENT_AND_CLAMP,  /**< Increments the current value and clamps to the maximum value. */
     DECREMENT_AND_CLAMP,  /**< Decrements the current value and clamps to 0. */
-    INVERT,               /**< Bitwise-inverts the current value. */
-    INCREMENT_AND_WRAP,   /**< Increments the current value and wraps back to 0. */
-    DECREMENT_AND_WRAP    /**< Decrements the current value and wraps to the maximum value. */
+    INVERT,  /**< Bitwise-inverts the current value. */
+    INCREMENT_AND_WRAP,  /**< Increments the current value and wraps back to 0. */
+    DECREMENT_AND_WRAP,  /**< Decrements the current value and wraps to the maximum value. */
 }
 
 enum SDL_GPUBlendOp : const CInt
 {
     INVALID,
-    ADD,               /**< (source * source_factor) + (destination * destination_factor) */
-    SUBTRACT,          /**< (source * source_factor) - (destination * destination_factor) */
+    ADD,  /**< (source * source_factor) + (destination * destination_factor) */
+    SUBTRACT,  /**< (source * source_factor) - (destination * destination_factor) */
     REVERSE_SUBTRACT,  /**< (destination * destination_factor) - (source * source_factor) */
-    MIN,               /**< min(source, destination) */
-    MAX                /**< max(source, destination) */
+    MIN,  /**< min(source, destination) */
+    MAX,  /**< max(source, destination) */
 }
 
 enum SDL_GPUBlendFactor : const CInt
 {
     INVALID,
-    ZERO,                      /**< 0 */
-    ONE,                       /**< 1 */
-    SRC_COLOR,                 /**< source color */
-    ONE_MINUS_SRC_COLOR,       /**< 1 - source color */
-    DST_COLOR,                 /**< destination color */
-    ONE_MINUS_DST_COLOR,       /**< 1 - destination color */
-    SRC_ALPHA,                 /**< source alpha */
-    ONE_MINUS_SRC_ALPHA,       /**< 1 - source alpha */
-    DST_ALPHA,                 /**< destination alpha */
-    ONE_MINUS_DST_ALPHA,       /**< 1 - destination alpha */
-    CONSTANT_COLOR,            /**< blend constant */
+    ZERO,  /**< 0 */
+    ONE,  /**< 1 */
+    SRC_COLOR,  /**< source color */
+    ONE_MINUS_SRC_COLOR,  /**< 1 - source color */
+    DST_COLOR,  /**< destination color */
+    ONE_MINUS_DST_COLOR,  /**< 1 - destination color */
+    SRC_ALPHA,  /**< source alpha */
+    ONE_MINUS_SRC_ALPHA,  /**< 1 - source alpha */
+    DST_ALPHA,  /**< destination alpha */
+    ONE_MINUS_DST_ALPHA,  /**< 1 - destination alpha */
+    CONSTANT_COLOR,  /**< blend constant */
     ONE_MINUS_CONSTANT_COLOR,  /**< 1 - blend constant */
-    SRC_ALPHA_SATURATE         /**< min(source alpha, 1 - destination alpha) */
+    SRC_ALPHA_SATURATE,  /**< min(source alpha, 1 - destination alpha) */
 }
 
 enum SDL_GPUColorComponentFlags : const char
@@ -402,27 +402,27 @@ enum SDL_GPUColorComponentFlags : const char
 enum SDL_GPUFilter : const CInt
 {
     NEAREST,  /**< Point filtering. */
-    LINEAR    /**< Linear filtering. */
+    LINEAR,  /**< Linear filtering. */
 }
 
 enum SDL_GPUSamplerMipmapMode : const CInt
 {
     NEAREST,  /**< Point filtering. */
-    LINEAR    /**< Linear filtering. */
+    LINEAR,  /**< Linear filtering. */
 }
 
 enum SDL_GPUSamplerAddressMode : const CInt
 {
-    REPEAT,           /**< Specifies that the coordinates will wrap around. */
+    REPEAT,  /**< Specifies that the coordinates will wrap around. */
     MIRRORED_REPEAT,  /**< Specifies that the coordinates will wrap around mirrored. */
-    CLAMP_TO_EDGE     /**< Specifies that the coordinates will clamp to the 0-1 range. */
+    CLAMP_TO_EDGE,  /**< Specifies that the coordinates will clamp to the 0-1 range. */
 }
 
 enum SDL_GPUPresentMode : const CInt
 {
     VSYNC,
     IMMEDIATE,
-    MAILBOX
+    MAILBOX,
 }
 
 enum SDL_GPUSwapchainComposition : const CInt
@@ -430,7 +430,7 @@ enum SDL_GPUSwapchainComposition : const CInt
     SDR,
     SDR_LINEAR,
     HDR_EXTENDED_LINEAR,
-    HDR10_ST2084
+    HDR10_ST2084,
 }
 
 /* Structures */
