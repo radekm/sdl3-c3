@@ -57,7 +57,7 @@ fn usz skip_comments(String[] lines, usz current_line)
             while (true)
             {
                 line = lines[++current_line];
-                if (line == "*/")
+                if (line == "*/" || line == " */")
                 {
                     current_line++;
                     break;
@@ -872,12 +872,14 @@ struct StructFieldLine
 
 enum StructLineKind
 {
+    UNPARSABLE,
     VERBATIM,
     ITEM,
 }
 
 union StructLine
 {
+    UnparsableLine unparsable;
     VerbatimLine verbatim;
     StructFieldLine field;
 }
@@ -978,6 +980,18 @@ fn StructLines? parse_struct_or_union_fields(String[] lines, usz* i)
                         struct_lines.push({ .verbatim = { .line = p.line } });
 
                     }, &struct_line_kinds, &struct_lines, &comment_starts)!;
+                    // Line with field with function pointer.
+                    ch.@variant(fn void?(Parsing* p,  List{StructLineKind}* struct_line_kinds, List{StructLine}* struct_lines)
+                    {
+                        String translated;
+                        p.ignore_space1()!;
+                        p.parse_and_translate_type(&translated)!;
+                        p.str("(SDLCALL *")!;
+
+                        struct_line_kinds.push(UNPARSABLE);
+                        struct_lines.push({ .unparsable = { .line = p.line } });
+
+                    }, &struct_line_kinds, &struct_lines)!;
                 }!;
                 if (comment_starts) mode = IN_COMMENT;
             case IN_COMMENT:
@@ -1179,6 +1193,9 @@ fn void? generate(String input_file)
                 StructLine struct_line = struct_lines.lines[j];
                 switch (kind)
                 {
+                    case UNPARSABLE:
+                        // Line which couldn't be translated.
+                        io::printfn("::LINE:: %s", struct_line.unparsable.line);
                     case VERBATIM:
                         io::printfn("%s", struct_line.verbatim.line);
                     case ITEM:
@@ -1209,7 +1226,7 @@ fn void? generate(String input_file)
             i++;
         }
         // Exported function.
-        else if (line.starts_with("extern SDL_DECLSPEC ") && !line.contains(" SDL_PRINTF_VARARG_FUNC"))
+        else if (line.starts_with("extern SDL_DECLSPEC ") && !line.contains(" SDL_PRINTF_VARARG_FUNC") && !line.contains(" SDL_ACQUIRE(") && !line.contains(" SDL_RELEASE("))
         {
             usz return_type_end = line.index_of("SDLCALL ")!!;
             String return_type = line[20..return_type_end-1];
