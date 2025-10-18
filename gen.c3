@@ -531,6 +531,9 @@ fn String? translate_type_ident(String ident)
             result = "iptr";
         case "uintptr_t":
             result = "uptr";
+        // Struct names may not be all uppercase.
+        case "SDL_GUID":
+            result = "SDL_Guid";
         default:
             if (ident.starts_with("SDL_")) result = ident;
     }
