@@ -88,8 +88,19 @@ fn usz skip_comments_and_empty_lines(String[] lines, usz current_line)
     return current_line;
 }
 
-fn usz longest_prefix_of_enum_items(EnumLines* enum_lines)
+fn usz longest_prefix_of_enum_items(String enum_name, EnumLines* enum_lines)
 {
+    switch (enum_name)
+    {
+        // `SDL_BitmapOrder` contains items like `SDL_BITMAPORDER_4321`
+        // where the removal of the longest common prefix leads to `4321`.
+        // So we remove only `SDL_BITMAP`.
+        case "SDL_BitmapOrder": return 10;
+        // `SDL_PackedLayout` contains items like `SDL_PACKEDLAYOUT_332`
+        // so we remove only `SDL_PACKED` prefix.
+        case "SDL_PackedLayout": return 10;
+    }
+
     String first_name;
     usz len;
     foreach (i, kind : enum_lines.kinds)
@@ -1098,7 +1109,7 @@ fn void? generate(String input_file)
             }
 
             // Drop the longest common prefix of item names.
-            usz common_prefix = longest_prefix_of_enum_items(&enum_lines);
+            usz common_prefix = longest_prefix_of_enum_items(enum_name, &enum_lines);
             foreach (j, kind : enum_lines.kinds)
             {
                 EnumLine enum_line = enum_lines.lines[j];
