@@ -1135,7 +1135,7 @@ fn void? generate(String input_file)
             io::printfn("}");
             i++;
         }
-        else if ((line.starts_with("typedef struct ") || line.starts_with("typedef union ")) && !line.ends_with(";"))
+        else if ((line.starts_with("typedef struct ") || line.starts_with("typedef union ")) && !line.ends_with(";") && line != "typedef struct SDL_Rect")
         {
             if (line.starts_with("typedef struct "))
             {
