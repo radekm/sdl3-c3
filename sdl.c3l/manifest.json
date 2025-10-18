@@ -1,0 +1,13 @@
+{
+    "provides": "sdl",
+    "c-sources": ["c/main.c"],
+    "c-include-dirs": ["c"],
+    "targets": {
+        "macos-aarch64": {
+            "linked-libraries": [
+                "sdl3",
+                "c"
+            ]
+        }
+    }
+}
