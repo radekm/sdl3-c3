@@ -501,6 +501,8 @@ fn String? translate_type_ident(String ident)
             result = "int";
         case "Uint32":
             result = "uint";
+        case "Sint64":
+            result = "long";
         case "Uint64":
             result = "ulong";
         case "int":
@@ -1135,6 +1137,7 @@ fn void? generate(String input_file)
             io::printfn("}");
             i++;
         }
+        // We skip `SDL_Rect` because it contains multiple fields defined on a single line.
         else if ((line.starts_with("typedef struct ") || line.starts_with("typedef union ")) && !line.ends_with(";") && line != "typedef struct SDL_Rect")
         {
             if (line.starts_with("typedef struct "))
