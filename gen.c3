@@ -171,6 +171,9 @@ String[*] hidden_enums = {
 
     // `SDL_pen.h`.
     "SDL_PenInputFlags",
+
+    // `SDL_mouse.h`.
+    "SDL_MouseButtonFlags",
 };
 
 String[*] hidden_enums_prefixes = {
@@ -202,6 +205,9 @@ String[*] hidden_enums_prefixes = {
 
     // `SDL_pen.h`.
     "SDL_PEN_INPUT_",
+
+    // `SDL_mouse.h`.
+    "SDL_BUTTON_",
 };
 
 fn bool is_hidden_enum_with_defines(String line, String* hidden_enum_name, String* hidden_enum_prefix)
