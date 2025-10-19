@@ -96,9 +96,18 @@ fn usz longest_prefix_of_enum_items(String enum_name, EnumLines* enum_lines)
         // where the removal of the longest common prefix leads to `4321`.
         // So we remove only `SDL_BITMAP`.
         case "SDL_BitmapOrder": return 10;
-        // `SDL_PackedLayout` contains items like `SDL_PACKEDLAYOUT_332`
+        // `SDL_PackedLayout` contains items like `SDL_PACKEDLAYOUT_332`,
         // so we remove only `SDL_PACKED` prefix.
         case "SDL_PackedLayout": return 10;
+        // `SDL_GPUTextureType` contains items like `SDL_GPU_TEXTURETYPE_2D`,
+        // so we remove only `SDL_GPU_TEXTURE`.
+        case "SDL_GPUTextureType": return 15;
+        // `SDL_GPUIndexElementSize` contains items like `SDL_GPU_INDEXELEMENTSIZE_16BIT`,
+        // so we remove only `SDL_GPU_INDEXELEMENT`.
+        case "SDL_GPUIndexElementSize": return 20;
+        // `SDL_GPUSampleCount` contains items like `SDL_GPU_SAMPLECOUNT_1`,
+        // so we remove only `SDL_GPU_SAMPLE`.
+        case "SDL_GPUSampleCount": return 14;
     }
 
     String first_name;
@@ -234,14 +243,34 @@ fn String nice_function_name(String function_name)
     DString result;
     result.tinit();
 
-    bool last_lowercase;
-    foreach (c : function_name)
+    foreach (i, c : function_name)
     {
-        if (c.is_upper())
+        // GetNumGPUDrivers:
+        //     GOOD   get_num_gpu_drivers
+        //     WRONG  get_num_gpudrivers
+        // SetWindowSurfaceVSync:
+        //     GOOD   set_window_surface_vsync
+        //     WRONG  set_window_surface_v_sync
+        // SDL_GL_ResetAttributes
+        //     GOOD   gl_reset_attributes
+        //     WRONG  gl__reset_attributes
+        if (c.is_upper() && i > 0)
         {
-            if (last_lowercase) result.append_char('_');
+            bool last_lowercase = function_name[i - 1].is_lower();
+            // If we use only last one then `SetWindowSurfaceVSync` becomes `set_window_surface_v_sync` which looks wrong.
+            bool last_two_uppercase = i > 1 && function_name[i - 2].is_upper() && function_name[i - 1].is_upper();
+            // Uppercase starts.
+            if (last_lowercase)
+            {
+                result.append_char('_');
+            }
+            // Uppercase ends.
+            else if (last_two_uppercase)
+            {
+                bool next_lowercase = i + 1 < function_name.len && function_name[i + 1].is_lower();
+                if (next_lowercase) result.append_char('_');
+            }
         }
-        last_lowercase = c.is_lower();
         result.append_char(c.to_lower());
     }
     return result.str_view();
@@ -1153,7 +1182,7 @@ fn void? generate(String input_file)
                         io::printfn("%s", enum_line.verbatim.line);
                     case ITEM:
                         EnumItemLine item = enum_line.item;
-                        io::printf("    %s", item.name[common_prefix..]);
+                        io::printf("    %s", item.name[common_prefix..].to_upper_tcopy());
                         if (item.value != "") io::printf(" = %s", item.value);
                         io::printf(",");
                         if (item.comment_starting_after_item != "") io::printf("  %s", item.comment_starting_after_item);

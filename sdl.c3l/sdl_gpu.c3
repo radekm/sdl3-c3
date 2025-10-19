@@ -1,16 +1,5 @@
 module sdl;
 
-/* WIKI CATEGORY: GPU */
-
-
-::LINE:: #ifndef SDL_gpu_h_
-::LINE:: #define SDL_gpu_h_
-
-
-::LINE:: #ifdef __cplusplus
-::LINE:: extern "C" {
-::LINE:: #endif /* __cplusplus */
-
 /* Type Declarations */
 
 typedef SDL_GPUDevice = void;
@@ -1329,17 +1318,3 @@ extern fn uint calculate_gpu_texture_format_size(
 extern fn SDL_PixelFormat get_pixel_format_from_gpu_texture_format(SDL_GPUTextureFormat format) @extern("SDL_GetPixelFormatFromGPUTextureFormat");
 
 extern fn SDL_GPUTextureFormat get_gpu_texture_format_from_pixel_format(SDL_PixelFormat format) @extern("SDL_GetGPUTextureFormatFromPixelFormat");
-
-::LINE:: #ifdef SDL_PLATFORM_GDK
-
-extern fn void gdk_suspend_gpu(SDL_GPUDevice* device) @extern("SDL_GDKSuspendGPU");
-
-extern fn void gdk_resume_gpu(SDL_GPUDevice* device) @extern("SDL_GDKResumeGPU");
-
-::LINE:: #endif /* SDL_PLATFORM_GDK */
-
-::LINE:: #ifdef __cplusplus
-::LINE:: }
-::LINE:: #endif /* __cplusplus */
-
-::LINE:: #endif /* SDL_gpu_h_ */

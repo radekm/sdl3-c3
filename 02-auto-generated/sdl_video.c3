@@ -251,7 +251,7 @@ extern fn bool set_window_fullscreen_mode(SDL_Window* window, SDL_DisplayMode* m
 
 extern fn SDL_DisplayMode* get_window_fullscreen_mode(SDL_Window* window) @extern("SDL_GetWindowFullscreenMode");
 
-extern fn void* get_window_iccprofile(SDL_Window* window, usz* size) @extern("SDL_GetWindowICCProfile");
+extern fn void* get_window_icc_profile(SDL_Window* window, usz* size) @extern("SDL_GetWindowICCProfile");
 
 extern fn SDL_PixelFormat get_window_pixel_format(SDL_Window* window) @extern("SDL_GetWindowPixelFormat");
 

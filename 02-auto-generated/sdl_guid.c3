@@ -19,7 +19,7 @@ struct SDL_GUID
 
 /* Function prototypes */
 
-extern fn void guidto_string(SDL_Guid guid, char* pszGUID, CInt cbGUID) @extern("SDL_GUIDToString");
+extern fn void guid_to_string(SDL_Guid guid, char* pszGUID, CInt cbGUID) @extern("SDL_GUIDToString");
 
 extern fn SDL_Guid string_to_guid(ZString pchGUID) @extern("SDL_StringToGUID");
 

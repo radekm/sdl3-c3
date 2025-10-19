@@ -62,7 +62,7 @@ extern fn ZString get_joystick_path_for_id(SDL_JoystickID instance_id) @extern("
 
 extern fn CInt get_joystick_player_index_for_id(SDL_JoystickID instance_id) @extern("SDL_GetJoystickPlayerIndexForID");
 
-extern fn SDL_Guid get_joystick_guidfor_id(SDL_JoystickID instance_id) @extern("SDL_GetJoystickGUIDForID");
+extern fn SDL_Guid get_joystick_guid_for_id(SDL_JoystickID instance_id) @extern("SDL_GetJoystickGUIDForID");
 
 extern fn ushort get_joystick_vendor_for_id(SDL_JoystickID instance_id) @extern("SDL_GetJoystickVendorForID");
 
@@ -181,7 +181,7 @@ extern fn ZString get_joystick_serial(SDL_Joystick* joystick) @extern("SDL_GetJo
 
 extern fn SDL_JoystickType get_joystick_type(SDL_Joystick* joystick) @extern("SDL_GetJoystickType");
 
-extern fn void get_joystick_guidinfo(SDL_Guid guid, ushort* vendor, ushort* product, ushort* version, ushort* crc16) @extern("SDL_GetJoystickGUIDInfo");
+extern fn void get_joystick_guid_info(SDL_Guid guid, ushort* vendor, ushort* product, ushort* version, ushort* crc16) @extern("SDL_GetJoystickGUIDInfo");
 
 extern fn bool joystick_connected(SDL_Joystick* joystick) @extern("SDL_JoystickConnected");
 
