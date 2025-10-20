@@ -3,7 +3,7 @@
 #include <metal_texture>
 using namespace metal;
 
-#line 1 "shaders.slang"
+#line 1 "examples/simple/shaders.slang"
 struct pixelOutput_0
 {
     float4 output_0 [[color(0)]];

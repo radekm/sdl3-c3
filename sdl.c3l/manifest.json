@@ -8,6 +8,16 @@
                 "sdl3",
                 "c"
             ]
+        },
+        "linux-x64": {
+            "linked-libraries": [
+                "SDL3"
+            ]
+        },
+        "windows-x64": {
+            "linked-libraries": [
+                "sdl3"
+            ]
         }
     }
 }

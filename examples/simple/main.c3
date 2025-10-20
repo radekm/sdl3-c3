@@ -4,6 +4,8 @@ import std;
 import sdl;
 
 char[*] metal_shaders = $embed("shaders.metal");
+char[*] spirv_shaders = $embed("shaders.spv");
+char[*] dxil_shaders = $embed("shaders.dxil");
 
 // The vertex input layout.
 struct Vertex
@@ -31,8 +33,28 @@ fn SDL_AppResult app_init(void** appstate, int argc, char** argv) @export("SDL_A
     window = sdl::create_window("Hello, Triangle!", 960, 540, RESIZABLE);
 
     // Create the device.
-    device = sdl::create_gpu_device(MSL, false, null);
+    device = sdl::create_gpu_device(
+        SDL_GPUShaderFormat.MSL | SDL_GPUShaderFormat.SPIRV | SDL_GPUShaderFormat.DXIL,
+        false, null);
     if (!device) abort("No device created");
+
+    SDL_GPUShaderFormat backend_shader_formats = sdl::get_gpu_shader_formats(device);
+    SDL_GPUShaderFormat shader_format;
+    char[] shaders_code;
+    switch
+    {
+        case backend_shader_formats & SDL_GPUShaderFormat.MSL != 0:
+            shader_format = MSL;
+            shaders_code = &metal_shaders;
+        case backend_shader_formats & SDL_GPUShaderFormat.SPIRV != 0:
+            shader_format = SPIRV;
+            shaders_code = &spirv_shaders;
+        case backend_shader_formats & SDL_GPUShaderFormat.DXIL != 0:
+            shader_format = DXIL;
+            shaders_code = &dxil_shaders;
+        default:
+            abort("Unrecognized backend shader format");
+    }
 
     sdl::claim_window_for_gpu_device(device, window);
 
@@ -80,10 +102,10 @@ fn SDL_AppResult app_init(void** appstate, int argc, char** argv) @export("SDL_A
 
     // Create the vertex shader.
     SDL_GPUShaderCreateInfo vertex_info;
-    vertex_info.code = &metal_shaders;
-    vertex_info.code_size = metal_shaders.len;
+    vertex_info.code = shaders_code.ptr;
+    vertex_info.code_size = shaders_code.len;
     vertex_info.entrypoint = "vertexMain";
-    vertex_info.format = MSL;
+    vertex_info.format = shader_format;
     vertex_info.stage = VERTEX;
     vertex_info.num_samplers = 0;
     vertex_info.num_storage_buffers = 0;
@@ -93,10 +115,10 @@ fn SDL_AppResult app_init(void** appstate, int argc, char** argv) @export("SDL_A
 
     // Create the fragment shader.
     SDL_GPUShaderCreateInfo fragment_info;
-    fragment_info.code = &metal_shaders;
-    fragment_info.code_size = metal_shaders.len;
+    fragment_info.code = shaders_code.ptr;
+    fragment_info.code_size = shaders_code.len;
     fragment_info.entrypoint = "fragmentMain";
-    fragment_info.format = MSL;
+    fragment_info.format = shader_format;
     fragment_info.stage = FRAGMENT;
     fragment_info.num_samplers = 0;
     fragment_info.num_storage_buffers = 0;
