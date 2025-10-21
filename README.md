@@ -6,10 +6,16 @@ Currently it's known to work on macOS and Linux. It doesn't work on Windows.
 
 ## Building examples
 
-Examples can be built by running
+On macOS examples can be built by running
 
 ```bash
 ./build-examples.sh -L "$(brew --prefix sdl3)/lib"
+```
+
+On Windows
+
+```bash
+./build-examples.bat <absolute path to SDL.lib>
 ```
 
 ## Contributions
