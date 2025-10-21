@@ -27,16 +27,22 @@ SDL_GPUDevice* device;
 SDL_GPUBuffer* vertex_buffer;
 SDL_GPUGraphicsPipeline* graphics_pipeline;
 
+fn void abort_with_sdl_error(String problem) @noreturn
+{
+    abort("%s: %s", problem, sdl::get_error());
+}
+
 fn SDL_AppResult app_init(void** appstate, int argc, char** argv) @export("SDL_AppInit")
 {
     // Create a window.
     window = sdl::create_window("Hello, Triangle!", 960, 540, RESIZABLE);
+    if (!window) abort_with_sdl_error("No window created");
 
     // Create the device.
     device = sdl::create_gpu_device(
         SDL_GPUShaderFormat.MSL | SDL_GPUShaderFormat.SPIRV | SDL_GPUShaderFormat.DXIL,
         false, null);
-    if (!device) abort("No device created");
+    if (!device) abort_with_sdl_error("No device created");
 
     SDL_GPUShaderFormat backend_shader_formats = sdl::get_gpu_shader_formats(device);
     SDL_GPUShaderFormat shader_format;
@@ -56,22 +62,25 @@ fn SDL_AppResult app_init(void** appstate, int argc, char** argv) @export("SDL_A
             abort("Unrecognized backend shader format");
     }
 
-    sdl::claim_window_for_gpu_device(device, window);
+    if (!sdl::claim_window_for_gpu_device(device, window)) abort_with_sdl_error("claim_window_for_gpu_device failed");
 
     // Create the vertex buffer.
     SDL_GPUBufferCreateInfo buffer_info;
     buffer_info.size = $sizeof(vertices);
     buffer_info.usage = VERTEX;
     vertex_buffer = sdl::create_gpu_buffer(device, &buffer_info);
+    if (!vertex_buffer) abort_with_sdl_error("create_gpu_buffer failed");
 
     // Create a transfer buffer to upload to the vertex buffer.
     SDL_GPUTransferBufferCreateInfo transfer_info;
     transfer_info.size = $sizeof(vertices);
     transfer_info.usage = UPLOAD;
     SDL_GPUTransferBuffer* transfer_buffer = sdl::create_gpu_transfer_buffer(device, &transfer_info);
+    if (!transfer_buffer) abort_with_sdl_error("create_gpu_transfer_buffer failed");
 
     // Map the transfer buffer to a pointer.
     Vertex* data = sdl::map_gpu_transfer_buffer(device, transfer_buffer, false);
+    if (!data) abort_with_sdl_error("map_gpu_transfer_buffer failed");
 
     mem::copy(data, &vertices, $sizeof(vertices));
 
@@ -80,6 +89,7 @@ fn SDL_AppResult app_init(void** appstate, int argc, char** argv) @export("SDL_A
 
     // Start a copy pass.
     SDL_GPUCommandBuffer* command_buffer = sdl::acquire_gpu_command_buffer(device);
+    if (!command_buffer) abort_with_sdl_error("acquire_gpu_command_buffer failed");
     SDL_GPUCopyPass* copy_pass = sdl::begin_gpu_copy_pass(command_buffer);
 
     // Where is the data.
@@ -98,7 +108,7 @@ fn SDL_AppResult app_init(void** appstate, int argc, char** argv) @export("SDL_A
 
     // End the copy pass.
     sdl::end_gpu_copy_pass(copy_pass);
-    sdl::submit_gpu_command_buffer(command_buffer);
+    if (!sdl::submit_gpu_command_buffer(command_buffer)) abort_with_sdl_error("submit_gpu_command_buffer failed");
 
     // Create the vertex shader.
     SDL_GPUShaderCreateInfo vertex_info;
@@ -112,6 +122,7 @@ fn SDL_AppResult app_init(void** appstate, int argc, char** argv) @export("SDL_A
     vertex_info.num_storage_textures = 0;
     vertex_info.num_uniform_buffers = 0;
     SDL_GPUShader* vertex_shader = sdl::create_gpu_shader(device, &vertex_info);
+    if (!vertex_shader) abort_with_sdl_error("Vertex shader creation failed");
 
     // Create the fragment shader.
     SDL_GPUShaderCreateInfo fragment_info;
@@ -125,6 +136,7 @@ fn SDL_AppResult app_init(void** appstate, int argc, char** argv) @export("SDL_A
     fragment_info.num_storage_textures = 0;
     fragment_info.num_uniform_buffers = 0;
     SDL_GPUShader* fragment_shader = sdl::create_gpu_shader(device, &fragment_info);
+    if (!fragment_shader) abort_with_sdl_error("Fragment shader creation failed");
 
     SDL_GPUGraphicsPipelineCreateInfo pipeline_info;
 
@@ -172,6 +184,7 @@ fn SDL_AppResult app_init(void** appstate, int argc, char** argv) @export("SDL_A
 
     // Create the pipeline.
     graphics_pipeline = sdl::create_gpu_graphics_pipeline(device, &pipeline_info);
+    if (!graphics_pipeline) abort_with_sdl_error("Pipeline creation failed");
 
     sdl::release_gpu_shader(device, fragment_shader);
     sdl::release_gpu_shader(device, vertex_shader);
@@ -182,16 +195,18 @@ fn SDL_AppResult app_init(void** appstate, int argc, char** argv) @export("SDL_A
 fn SDL_AppResult app_iterate(void* appstate) @export("SDL_AppIterate")
 {
     SDL_GPUCommandBuffer* command_buffer = sdl::acquire_gpu_command_buffer(device);
+    if (!command_buffer) abort_with_sdl_error("acquire_gpu_command_buffer failed");
 
     SDL_GPUTexture* swapchain_texture;
     uint width, height;
-    sdl::wait_and_acquire_gpu_swapchain_texture(command_buffer, window, &swapchain_texture, &width, &height);
+    bool ok = sdl::wait_and_acquire_gpu_swapchain_texture(command_buffer, window, &swapchain_texture, &width, &height);
+    if (!ok) abort_with_sdl_error("wait_and_acquire_gpu_swapchain_texture failed");
 
     // End the frame early if a swapchain texture is not available (eg. window is minimized).
     if (swapchain_texture == null)
     {
         // We must always submit the command buffer.
-        sdl::submit_gpu_command_buffer(command_buffer);
+        if (!sdl::submit_gpu_command_buffer(command_buffer)) abort_with_sdl_error("submit_gpu_command_buffer failed");
         return CONTINUE;
     }
 
@@ -219,7 +234,7 @@ fn SDL_AppResult app_iterate(void* appstate) @export("SDL_AppIterate")
 
     sdl::end_gpu_render_pass(render_pass);
 
-    sdl::submit_gpu_command_buffer(command_buffer);
+    if (!sdl::submit_gpu_command_buffer(command_buffer)) abort_with_sdl_error("submit_gpu_command_buffer failed");
 
     return CONTINUE;
 }
