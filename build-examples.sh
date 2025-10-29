@@ -7,4 +7,4 @@ build_dir="$script_dir/build"
 mkdir -p "$build_dir"
 cd "$build_dir"
 
-c3c compile --no-entry --libdir .. --lib sdl "$@" ../examples/simple/*.c3 -o simple
+c3c compile --no-entry --libdir .. --lib sdl "$@" ../examples/let-there-be-triangles/*.c3 -o let-there-be-triangles
