@@ -1,0 +1,62 @@
+on: [push]
+
+jobs:
+  build-examples-mac:
+    strategy:
+      matrix:
+        include:
+          - os: macos-latest
+            arch: arm64
+    runs-on: ${{ matrix.os }}
+    name: Build examples on macOS
+    steps:
+      - name: Ensure same LF line endings on all platforms
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+      - uses: actions/checkout@v4
+      - uses: radekm/setup-c3@v2
+        with:
+          version: v0.7.6
+      - name: Install SDL3
+        run: |
+          brew install sdl3
+      - name: Build examples
+        shell: bash
+        run: |
+          ./build-examples.sh -L "$(brew --prefix sdl3)/lib"
+
+          ls -l build
+  build-examples-windows:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            arch: x64
+    runs-on: ${{ matrix.os }}
+    name: Build examples on Windows
+    steps:
+      - name: Ensure same LF line endings on all platforms
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+      - uses: actions/checkout@v4
+      - uses: radekm/setup-c3@v2
+        with:
+          version: v0.7.6
+      - name: Download SDL3
+        shell: powershell
+        run: |
+          mkdir build -Force | Out-Null
+          cd build
+          Invoke-WebRequest -Uri "https://github.com/libsdl-org/SDL/releases/download/release-3.2.24/SDL3-devel-3.2.24-VC.zip" -OutFile "SDL3.zip"
+          Expand-Archive -Path SDL3.zip
+      - name: Build examples
+        shell: cmd
+        run: |
+          build-examples.bat SDL3\SDL3-3.2.24\lib\x64\SDL3.lib
+      # `dir` doesn't show anything when it's part of the previous step.
+      - name: Show what has been built
+        shell: cmd
+        run: |
+          dir build
