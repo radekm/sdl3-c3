@@ -18,4 +18,7 @@ link obj\windows-x64\main.obj obj\windows-x64\sdl\main.obj %* dbghelp.lib /SUBSY
 c3c compile-only --no-entry --libdir .. --lib sdl --single-module=yes ..\examples\spydog\common.c3 ..\examples\spydog\clear_screen.c3
 link obj\windows-x64\main.obj obj\windows-x64\sdl\main.obj %* dbghelp.lib /SUBSYSTEM:WINDOWS /OUT:clear-screen.exe
 
+c3c compile-only --no-entry --libdir .. --lib sdl --single-module=yes ..\examples\spydog\common.c3 ..\examples\spydog\clear_screen_multi_window.c3
+link obj\windows-x64\main.obj obj\windows-x64\sdl\main.obj %* dbghelp.lib /SUBSYSTEM:WINDOWS /OUT:clear-screen-multi-window.exe
+
 popd
