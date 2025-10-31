@@ -13,9 +13,9 @@ REM It works on macOS and Linux.
 REM
 REM --single-module=yes is just used to simplify linker invocation.
 c3c compile-only --no-entry --libdir .. --lib sdl --single-module=yes ..\examples\let-there-be-triangles\main.c3
-link obj\windows-x64\main.obj obj\windows-x64\sdl\main.obj %* dbghelp.lib Ws2_32.lib /SUBSYSTEM:WINDOWS /OUT:let-there-be-triangles.exe
+link obj\windows-x64\main.obj obj\windows-x64\sdl\main.obj %* dbghelp.lib /SUBSYSTEM:WINDOWS /OUT:let-there-be-triangles.exe
 
 c3c compile-only --no-entry --libdir .. --lib sdl --single-module=yes ..\examples\spydog\common.c3 ..\examples\spydog\clear_screen.c3
-link obj\windows-x64\main.obj obj\windows-x64\sdl\main.obj %* dbghelp.lib Ws2_32.lib /SUBSYSTEM:WINDOWS /OUT:clear-screen.exe
+link obj\windows-x64\main.obj obj\windows-x64\sdl\main.obj %* dbghelp.lib /SUBSYSTEM:WINDOWS /OUT:clear-screen.exe
 
 popd
