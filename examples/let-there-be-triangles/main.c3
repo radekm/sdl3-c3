@@ -179,7 +179,7 @@ fn SDL_AppResult app_init(void** appstate, int argc, char** argv) @export("SDL_A
     SDL_GPUColorTargetDescription[1] color_target_descriptions;
     color_target_descriptions[0].format = sdl::get_gpu_swapchain_texture_format(device, window);
 
-    pipeline_info.target_info.num_color_targets = 1;
+    pipeline_info.target_info.num_color_targets = color_target_descriptions.len;
     pipeline_info.target_info.color_target_descriptions = &color_target_descriptions;
 
     // Create the pipeline.
