@@ -148,6 +148,8 @@ fn usz longest_prefix_of_enum_items(String enum_name, EnumLines* enum_lines)
         return first_name.starts_with("SDL_") ? 4 : 0;
     }
     // At least two items.
+    // In this case we pick the longest prefix which ends with underscore.
+    while (len > 0 && first_name[len - 1] != '_') len--;
     return len;
 }
 

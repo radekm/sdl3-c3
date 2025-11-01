@@ -335,8 +335,8 @@ enum SDL_GPUCullMode : const CInt
 
 enum SDL_GPUFrontFace : const CInt
 {
-    OUNTER_CLOCKWISE,  /**< A triangle with counter-clockwise vertex winding will be considered front-facing. */
-    LOCKWISE,  /**< A triangle with clockwise vertex winding will be considered front-facing. */
+    COUNTER_CLOCKWISE,  /**< A triangle with counter-clockwise vertex winding will be considered front-facing. */
+    CLOCKWISE,  /**< A triangle with clockwise vertex winding will be considered front-facing. */
 }
 
 enum SDL_GPUCompareOp : const CInt
