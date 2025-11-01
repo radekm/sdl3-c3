@@ -128,3 +128,21 @@ fn void load_shaders(
     *out_vertex_shader = vertex_shader;
     *out_fragment_shader = fragment_shader;
 }
+
+// Vertex formats.
+struct PositionVertex
+{
+    float x, y, z;
+}
+
+struct PositionColorVertex
+{
+    float x, y, z;
+    char r, g, b, a;
+}
+
+struct PositionTextureVertex
+{
+    float x, y, z;
+    float u, v;
+}

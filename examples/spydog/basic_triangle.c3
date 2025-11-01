@@ -28,16 +28,14 @@ fn SDL_AppResult app_init(void** appstate, int argc, char** argv) @export("SDL_A
     load_shaders(&context, &metal_shaders, &spirv_shaders, &dxil_shaders, &vertex_shader, &fragment_shader);
 
     // Create the pipelines.
-    SDL_GPUColorTargetDescription[*] color_target_descriptions = {
-        {
-            .format = sdl::get_gpu_swapchain_texture_format(context.device, context.window),
-        }
-    };
-
     SDL_GPUGraphicsPipelineCreateInfo pipeline_create_info = {
         .target_info = {
-            .num_color_targets = color_target_descriptions.len,
-            .color_target_descriptions = &color_target_descriptions,
+            .num_color_targets = 1,
+            .color_target_descriptions = &&(SDL_GPUColorTargetDescription[*]){
+                {
+                    .format = sdl::get_gpu_swapchain_texture_format(context.device, context.window),
+                },
+            },
         },
         .primitive_type = TRIANGLELIST,
         .vertex_shader = vertex_shader,
