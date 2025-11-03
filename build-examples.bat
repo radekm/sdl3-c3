@@ -27,4 +27,7 @@ link obj\windows-x64\main.obj obj\windows-x64\sdl\main.obj %* dbghelp.lib /SUBSY
 c3c compile-only --no-entry --libdir .. --lib sdl --single-module=yes ..\examples\spydog\common.c3 ..\examples\spydog\basic_stencil.c3
 link obj\windows-x64\main.obj obj\windows-x64\sdl\main.obj %* dbghelp.lib /SUBSYSTEM:WINDOWS /OUT:basic-stencil.exe
 
+c3c compile-only --no-entry --libdir .. --lib sdl --single-module=yes ..\examples\spydog\common.c3 ..\examples\spydog\basic_vertex_buffer.c3
+link obj\windows-x64\main.obj obj\windows-x64\sdl\main.obj %* dbghelp.lib /SUBSYSTEM:WINDOWS /OUT:basic-vertex-buffer.exe
+
 popd

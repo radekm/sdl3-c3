@@ -12,3 +12,4 @@ c3c compile --no-entry --libdir .. --lib sdl "$@" ../examples/spydog/common.c3 .
 c3c compile --no-entry --libdir .. --lib sdl "$@" ../examples/spydog/common.c3 ../examples/spydog/clear_screen_multi_window.c3 -o clear-screen-multi-window
 c3c compile --no-entry --libdir .. --lib sdl "$@" ../examples/spydog/common.c3 ../examples/spydog/basic_triangle.c3 -o basic-triangle
 c3c compile --no-entry --libdir .. --lib sdl "$@" ../examples/spydog/common.c3 ../examples/spydog/basic_stencil.c3 -o basic-stencil
+c3c compile --no-entry --libdir .. --lib sdl "$@" ../examples/spydog/common.c3 ../examples/spydog/basic_vertex_buffer.c3 -o basic-vertex-buffer
