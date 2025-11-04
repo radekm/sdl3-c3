@@ -41,10 +41,10 @@ struct SDL_FRect
 
 ::LINE:: SDL_FORCE_INLINE void SDL_RectToFRect(const SDL_Rect *rect, SDL_FRect *frect)
 ::LINE:: {
-::LINE::     frect->x = (float)rect->x;
-::LINE::     frect->y = (float)rect->y;
-::LINE::     frect->w = (float)rect->w;
-::LINE::     frect->h = (float)rect->h;
+::LINE::     frect->x = SDL_static_cast(float, rect->x);
+::LINE::     frect->y = SDL_static_cast(float, rect->y);
+::LINE::     frect->w = SDL_static_cast(float, rect->w);
+::LINE::     frect->h = SDL_static_cast(float, rect->h);
 ::LINE:: }
 
 ::LINE:: SDL_FORCE_INLINE bool SDL_PointInRect(const SDL_Point *p, const SDL_Rect *r)

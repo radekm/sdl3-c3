@@ -85,7 +85,7 @@ fn bool rects_equal_epsilon(SDL_FRect* a, SDL_FRect* b, float epsilon)
         fabsf(a.w - b.w) <= epsilon && fabsf(a.h - b.h) <= epsilon;
 }
 
-fn bool rects_equal_float(SDL_FRect* a, SDL_FRect* b, float epsilon)
+fn bool rects_equal_float(SDL_FRect* a, SDL_FRect* b)
 {
     return rects_equal_epsilon(a, b, FLT_EPSILON);
 }

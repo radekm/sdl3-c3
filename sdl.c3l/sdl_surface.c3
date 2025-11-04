@@ -124,6 +124,8 @@ extern fn bool get_surface_clip_rect(SDL_Surface* surface, SDL_Rect* rect) @exte
 
 extern fn bool flip_surface(SDL_Surface* surface, SDL_FlipMode flip) @extern("SDL_FlipSurface");
 
+extern fn SDL_Surface* rotate_surface(SDL_Surface* surface, float angle) @extern("SDL_RotateSurface");
+
 extern fn SDL_Surface* duplicate_surface(SDL_Surface* surface) @extern("SDL_DuplicateSurface");
 
 extern fn SDL_Surface* scale_surface(SDL_Surface* surface, CInt width, CInt height, SDL_ScaleMode scaleMode) @extern("SDL_ScaleSurface");
