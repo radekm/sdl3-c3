@@ -534,6 +534,8 @@ fn String? translate_type_ident(String ident)
         case "bool":
             // Or should we return `CBool`?
             result = "bool";
+        case "Sint8":
+            result = "ichar";
         case "Uint8":
             result = "char";
         case "Sint16":
