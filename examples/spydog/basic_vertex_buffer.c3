@@ -21,11 +21,7 @@ fn SDL_AppResult app_init(void** appstate, int argc, char** argv) @export("SDL_A
     SDL_GPUShader* fragment_shader;
     load_shaders(&context, &metal_shaders, &spirv_shaders, &dxil_shaders, &vertex_shader, &fragment_shader);
 
-    // Create the pipeline
-    SDL_GPUGraphicsPipelineCreateInfo pipelineCreateInfo = {
-    };
-
-    // Create the pipelines.
+    // Create the pipeline.
     SDL_GPUGraphicsPipelineCreateInfo pipeline_create_info = {
         .target_info = {
             .num_color_targets = 1,

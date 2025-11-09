@@ -30,4 +30,7 @@ link obj\windows-x64\main.obj obj\windows-x64\sdl\main.obj %* dbghelp.lib /SUBSY
 c3c compile-only --no-entry --libdir .. --lib sdl --single-module=yes ..\examples\spydog\common.c3 ..\examples\spydog\basic_vertex_buffer.c3
 link obj\windows-x64\main.obj obj\windows-x64\sdl\main.obj %* dbghelp.lib /SUBSYSTEM:WINDOWS /OUT:basic-vertex-buffer.exe
 
+c3c compile-only --no-entry --libdir .. --lib sdl --single-module=yes ..\examples\spydog\common.c3 ..\examples\spydog\blit_2d_array.c3
+link obj\windows-x64\main.obj obj\windows-x64\sdl\main.obj %* dbghelp.lib /SUBSYSTEM:WINDOWS /OUT:blit-2d-array.exe
+
 popd

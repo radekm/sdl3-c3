@@ -129,6 +129,28 @@ fn void load_shaders(
     *out_fragment_shader = fragment_shader;
 }
 
+fn SDL_Surface* load_image(char[] image_data, int desired_channels)
+{
+    SDL_IOStream* stream = sdl::io_from_const_mem(image_data.ptr, image_data.len);
+    if (!stream) abort_with_sdl_error("io_from_const_mem failed");
+
+    SDL_Surface* result = sdl::load_bmp_io(stream, true);
+    if (!result) abort_with_sdl_error("Failed to load BMP");
+
+    if (desired_channels != 4) abort("Unexpected desired_channels");
+    SDL_PixelFormat format = ABGR8888;
+
+    if (result.format != format)
+    {
+        SDL_Surface* next = sdl::convert_surface(result, format);
+        if (!next) abort_with_sdl_error("convert_surface failed");
+        sdl::destroy_surface(result);
+        result = next;
+    }
+
+    return result;
+}
+
 // Vertex formats.
 struct PositionVertex
 {
